@@ -51,4 +51,6 @@ Desktop.ini
 
 # Spring config (optional, 민감정보 분리용)
 application-*.yml
-application-*.properties
+
+# Secret config (절대 커밋하지 말 것)
+src/main/resources/application-secret.properties
