@@ -4,6 +4,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -16,8 +17,38 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.authorizeHttpRequests(auth -> auth.anyRequest().authenticated())
-                .formLogin(withDefaults());
+        http
+                // CSRF 토큰 검증 기능 비활성화
+                // 개발 단계에서 POST 요청 테스트를 쉽게 하기 위함
+                // (운영에서는 보안상 꼭 다시 켜야 함)
+                .csrf(AbstractHttpConfigurer::disable).
+
+                // 스프링이 제공하는 기본 로그인 페이지 비활성화
+                // 우리가 직접 만든 로그인 페이지로 교체할 예정이라 죽여둠.
+                formLogin(AbstractHttpConfigurer::disable)
+
+                // 브라우저 기본 인증 팝업 (Basic Auth) 비활성화
+                // 필요 없는 인증창이 뜨지 않게 막음
+                .httpBasic(AbstractHttpConfigurer::disable)
+
+                // 인가(Authorization) 규칙 설정
+                // 현재는 모든 요청(anyRequest)에 대해 permitAll() -> 누구나 접근 가능
+                // 즉, 인증/로그인 요구하지 않음
+                .authorizeHttpRequests(auth -> auth
+                        .anyRequest().permitAll()
+                )
+
+                // 로그아웃 기능 설정
+                // logoutUrl("/member/logout") : 해당 경로로 요청하면 로그아웃 처리
+                // logoutSuccessUrl("/") : 로그아웃 후 메인("/")으로 이동
+                // permitAll() : 로그인 여부 상관없이 누구나 로그아웃 요청 가능
+                .logout(logout -> logout
+                        .logoutUrl("/member/logout")
+                        .logoutSuccessUrl("/")
+                        .permitAll()
+                );
+
+        // 설정한 내용을 바탕으로 SecurityFilterChain 객체 생성 및 반환
         return http.build();
     }
     // @Bean : 이 메소드가 반환하는 객체를 스프링 컨테이너에 Bean으로 등록하겠다는 뜻.
