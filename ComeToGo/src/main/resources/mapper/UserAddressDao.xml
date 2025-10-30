@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.cometogo.ctg.user.dao.UserAddressDao">
+
+<insert id="joinUserAddress" parameterType="com.cometogo.ctg.user.dto.UserAddressDto">
+    INSERT INTO ctg_address (user_id, city, district, neighborhood)
+    VALUES (#{userId}, #{city}, #{district}, #{neighborhood})
+</insert>
+
+</mapper>
