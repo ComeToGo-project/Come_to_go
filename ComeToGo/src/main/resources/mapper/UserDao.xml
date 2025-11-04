@@ -5,12 +5,12 @@
 
 <mapper namespace="com.cometogo.ctg.user.dao.UserDao">
     <!-- 회원가입 -->
-    <insert id="joinUser" parameterType="com.cometogo.ctg.user.dto.UserDto"
-            useGeneratedKeys="true" keyProperty="user_id">
+    <insert id="joinUser" parameterType="UserDto"
+            useGeneratedKeys="true" keyProperty="userId">
         INSERT INTO ctg_users
         (id, pw, user_name, nickname, birth, phone, email, gender, user_role, temperature)
         VALUES
-            (#{id}, #{pw}, #{user_name}, #{nickname}, #{birth}, #{phone}, #{email}, #{gender},
+            (#{id}, #{pw}, #{userName}, #{nickname}, #{birth}, #{phone}, #{email}, #{gender},
              "USER", 36)
     </insert>
 
@@ -30,7 +30,7 @@
     </select>
 
     <!-- 로그인-->
-    <select id="findUserById" parameterType="string" resultType="com.cometogo.ctg.user.dto.UserDto">
+    <select id="findUserById" parameterType="string" resultType="UserDto">
         SELECT * FROM ctg_users WHERE id = #{id}
     </select>
 

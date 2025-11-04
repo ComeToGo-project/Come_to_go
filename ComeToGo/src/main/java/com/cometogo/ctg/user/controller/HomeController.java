@@ -17,13 +17,6 @@ public class HomeController {
 
     @GetMapping("/")
     public String mainPage(HttpSession session, Model model) {
-        Long userId = (Long) session.getAttribute("user_id");
-        if (userId != null) {
-            String nickname = userService.getNicknameByUserId(userId);
-            if (nickname != null) {
-                model.addAttribute("nickname", nickname);
-            }
-        }
         return "index";  // 메인 페이지 뷰
     }
 }
