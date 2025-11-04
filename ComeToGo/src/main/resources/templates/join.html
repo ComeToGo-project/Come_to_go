@@ -16,7 +16,7 @@
     <!-- 아이디 -->
     <div>
         <label class="block font-semibold mb-1">아이디</label>
-        <input type="text" th:field="*{id}" id="userId" placeholder="아이디"
+        <input type="text" th:field="*{id}" placeholder="아이디"
                class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"/>
         <p th:if="${#fields.hasErrors('id')}" th:errors="*{id}" class="text-xs text-red-500 mt-1"></p>
         <p th:if="${idDuplicateError != null}" th:text="${idDuplicateError}" class="text-xs text-red-500 mt-1"></p>
@@ -25,7 +25,7 @@
     <!-- 비밀번호 -->
     <div>
         <label class="block font-semibold mb-1">비밀번호</label>
-        <input type="password" th:field="*{pw}" id="userPw" placeholder="비밀번호"
+        <input type="password" th:field="*{pw}" placeholder="비밀번호"
                class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"/>
         <p th:if="${#fields.hasErrors('pw')}" th:errors="*{pw}" class="text-xs text-red-500 mt-1"></p>
     </div>
@@ -33,35 +33,34 @@
     <!-- 비밀번호 확인 -->
     <div>
         <label class="block font-semibold mb-1">비밀번호 확인</label>
-        <input type="password" th:field="*{pwCheck}" id="pwCheck" placeholder="비밀번호 확인"
+        <input type="password" th:field="*{pwCheck}" placeholder="비밀번호 확인"
                class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"/>
         <p th:if="${#fields.hasErrors('pwCheck')}" th:errors="*{pwCheck}" class="text-xs text-red-500 mt-1"></p>
     </div>
     <!-- 비밀번호 불일치 에러 메시지 표시 -->
     <div th:if="${pwError != null}" th:text="${pwError}" class="text-xs text-red-500 mt-1"></div>
-
     <!-- 이름 -->
     <div>
         <label class="block font-semibold mb-1">이름</label>
-        <input type="text" th:field="*{userName}" id="userName" placeholder="이름"
+        <input type="text" th:field="*{userName}" placeholder="이름"
                class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"/>
-        <p th:if="${#fields.hasErrors('userName')}" th:errors="*{userName}" class="text-xs text-red-500 mt-1"></p>
+        <p th:if="${#fields.hasErrors('user_name')}" th:errors="*{userName}" class="text-xs text-red-500 mt-1"></p>
     </div>
 
     <!-- 닉네임 -->
     <div>
         <label class="block font-semibold mb-1">닉네임</label>
-        <input type="text" th:field="*{nickname}" id="nickname" placeholder="닉네임"
+        <input type="text" th:field="*{nickname}" placeholder="닉네임"
                class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"/>
         <p th:if="${#fields.hasErrors('nickname')}" th:errors="*{nickname}" class="text-xs text-red-500 mt-1"></p>
-        <p th:if="${nicknameDuplicateError != null}" th:text="${nicknameDuplicateError}"
-           class="text-xs text-red-500 mt-1"></p>
     </div>
+    <p th:if="${nicknameDuplicateError != null}" th:text="${nicknameDuplicateError}"
+       class="text-xs text-red-500 mt-1"></p>
 
     <!-- 성별 -->
     <div>
         <label class="block font-semibold mb-1">성별</label>
-        <select th:field="*{gender}" id="gender" class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+        <select th:field="*{gender}" class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
             <option value="" disabled selected>선택</option>
             <option value="M">남자</option>
             <option value="F">여자</option>
@@ -72,7 +71,7 @@
     <!-- 생년월일 -->
     <div>
         <label class="block font-semibold mb-1">생년월일</label>
-        <input type="date" th:field="*{birth}" id="birth"
+        <input type="date" th:field="*{birth}"
                class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"/>
         <p th:if="${#fields.hasErrors('birth')}" th:errors="*{birth}" class="text-xs text-red-500 mt-1"></p>
     </div>
@@ -88,60 +87,17 @@
     <!-- 이메일 + 인증 버튼 -->
     <div>
         <label class="block font-semibold mb-1">이메일</label>
-
-        <!-- 인증 안된 경우: 이메일 입력 + 인증 버튼 -->
-        <div th:if="${verifiedEmail == null}" class="flex gap-2">
-            <input type="email"
-                   th:field="*{email}"
-                   placeholder="example@domain.com"
-                   id="userEmail"
+        <div class="flex gap-2">
+            <input type="email" th:field="*{email}" placeholder="example@domain.com"
                    class="flex-1 border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"/>
-
-            <button type="button" onclick="sendVerifyCode()" id="sendCodeBtn"
-                    class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition whitespace-nowrap">
+            <button type="button" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
                 인증 요청
             </button>
         </div>
-
-        <!-- 인증 완료된 경우: 이메일 표시 (화면용) + hidden input (전송용) -->
-        <div th:if="${verifiedEmail != null}">
-            <!-- 화면에 보이는 input (disabled) -->
-            <input type="email"
-                   th:value="${verifiedEmail}"
-                   disabled
-                   class="w-full border border-gray-300 rounded px-3 py-2 bg-gray-100 text-gray-600 cursor-not-allowed"/>
-
-            <!-- 실제 서버로 전송되는 hidden input -->
-            <input type="hidden" name="email" th:value="${verifiedEmail}"/>
-        </div>
-
-        <p id="emailSendResult" class="text-xs mt-1"></p>
         <p th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="text-xs text-red-500 mt-1"></p>
         <p th:if="${emailDuplicateError != null}" th:text="${emailDuplicateError}"
            class="text-xs text-red-500 mt-1"></p>
     </div>
-
-    <!-- 인증 코드 입력 필드 (인증 안된 경우에만 표시) -->
-    <div id="verifyCodeSection" th:if="${verifiedEmail == null}" style="display:none;">
-        <label class="block font-semibold mb-1">인증 코드</label>
-        <div class="flex gap-2">
-            <input type="text" id="verifyCode" placeholder="6자리 인증 코드" maxlength="6"
-                   class="flex-1 border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"/>
-            <button type="button" onclick="verifyEmailCode()"
-                    class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition whitespace-nowrap">
-                인증 확인
-            </button>
-        </div>
-        <p id="verifyResult" class="text-xs mt-1"></p>
-        <p id="timerDisplay" class="text-xs text-gray-600 mt-1"></p>
-    </div>
-
-    <!-- 인증 완료 표시 (세션에 verifiedEmail이 있을 때만 표시) -->
-    <div th:if="${verifiedEmail != null}" class="bg-green-50 border border-green-300 rounded p-3 mt-2">
-        <p class="text-sm text-green-700 font-semibold">✓ 이메일 인증 완료</p>
-        <p class="text-xs text-green-600" th:text="${verifiedEmail}"></p>
-    </div>
-
 
     <!-- 주소 -->
     <div>
@@ -168,7 +124,6 @@
     </button>
 
 </form>
-
 <!--주소 JS-->
 <script>
     function execDaumPostcode() {
@@ -181,7 +136,6 @@
         }).open();
     }
 </script>
-
 <!--전화번호 형식 JS-->
 <script>
     const phoneInput = document.getElementById('phone');
@@ -196,182 +150,6 @@
             this.value = number.substr(0,3) + '-' + number.substr(3,4) + '-' + number.substr(7);
         } else {
             this.value = number.substr(0,3) + '-' + number.substr(3,4) + '-' + number.substr(7,4);
-        }
-    });
-</script>
-
-<!--이메일 인증 JS-->
-<script th:inline="javascript">
-    const verifiedEmailFromSession = /*[[${verifiedEmail}]]*/ null;
-    let timerInterval = null;
-
-    // 인증 코드 발송
-    function sendVerifyCode() {
-        const email = document.getElementById('userEmail').value;
-        const resultEl = document.getElementById('emailSendResult');
-        const sendBtn = document.getElementById('sendCodeBtn');
-
-        if (!email) {
-            resultEl.textContent = '이메일을 입력해주세요.';
-            resultEl.className = 'text-xs text-red-500 mt-1';
-            return;
-        }
-
-        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailPattern.test(email)) {
-            resultEl.textContent = '올바른 이메일 형식이 아닙니다.';
-            resultEl.className = 'text-xs text-red-500 mt-1';
-            return;
-        }
-
-        sendBtn.disabled = true;
-        sendBtn.textContent = '발송 중...';
-
-        fetch('/user/send-verify-code?email=' + encodeURIComponent(email), {
-            method: 'POST'
-        })
-            .then(response => response.json())
-            .then(function(data) {
-                if (data.success) {
-                    resultEl.textContent = '✓ 인증 코드가 발송되었습니다. 이메일을 확인해주세요.';
-                    resultEl.className = 'text-xs text-green-600 mt-1';
-                    document.getElementById('verifyCodeSection').style.display = 'block';
-
-                    startTimer(300);
-
-                    setTimeout(function() {
-                        sendBtn.disabled = false;
-                        sendBtn.textContent = '재발송';
-                    }, 180000);
-                } else {
-                    resultEl.textContent = data.message || '발송 실패';
-                    resultEl.className = 'text-xs text-red-500 mt-1';
-                    sendBtn.disabled = false;
-                    sendBtn.textContent = '인증 요청';
-                }
-            })
-            .catch(function(error) {
-                resultEl.textContent = '발송 중 오류가 발생했습니다.';
-                resultEl.className = 'text-xs text-red-500 mt-1';
-                sendBtn.disabled = false;
-                sendBtn.textContent = '인증 요청';
-            });
-    }
-
-    // 인증 코드 확인
-    function verifyEmailCode() {
-        const email = document.getElementById('userEmail').value;
-        const code = document.getElementById('verifyCode').value;
-        const resultEl = document.getElementById('verifyResult');
-
-        if (!code) {
-            resultEl.textContent = '인증 코드를 입력해주세요.';
-            resultEl.className = 'text-xs text-red-500 mt-1';
-            return;
-        }
-
-        if (code.length !== 6) {
-            resultEl.textContent = '6자리 인증 코드를 입력해주세요.';
-            resultEl.className = 'text-xs text-red-500 mt-1';
-            return;
-        }
-
-        fetch('/user/verify-code', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: 'email=' + encodeURIComponent(email) + '&code=' + encodeURIComponent(code)
-        })
-            .then(response => response.json())
-            .then(function(data) {
-                if (data.success) {
-                    resultEl.textContent = '✓ 이메일 인증 완료!';
-                    resultEl.className = 'text-xs text-green-600 font-semibold mt-1';
-
-                    if (timerInterval) {
-                        clearInterval(timerInterval);
-                    }
-
-                    // ★ 새로고침 대신 UI 직접 변경
-                    showVerifiedUI(email);
-                } else {
-                    resultEl.textContent = data.message || '인증 실패';
-                    resultEl.className = 'text-xs text-red-500 mt-1';
-                }
-            })
-            .catch(function(error) {
-                resultEl.textContent = '인증 중 오류가 발생했습니다.';
-                resultEl.className = 'text-xs text-red-500 mt-1';
-            });
-    }
-
-    // 인증 완료 시 UI 변경
-    function showVerifiedUI(email) {
-        // 인증 코드 입력 섹션 숨기기
-        const verifySection = document.getElementById('verifyCodeSection');
-        if (verifySection) {
-            verifySection.style.display = 'none';
-        }
-
-        // 이메일 입력 영역을 인증 완료 상태로 변경
-        const emailContainer = document.querySelector('[id="userEmail"]').parentElement;
-        emailContainer.innerHTML = '<input type="email" value="' + email + '" disabled class="w-full border border-gray-300 rounded px-3 py-2 bg-gray-100 text-gray-600 cursor-not-allowed"/><input type="hidden" name="email" value="' + email + '"/>';
-
-        // 인증 완료 표시 박스 생성 및 추가
-        const verifiedBox = document.createElement('div');
-        verifiedBox.className = 'bg-green-50 border border-green-300 rounded p-3 mt-2';
-        verifiedBox.innerHTML = '<p class="text-sm text-green-700 font-semibold">✓ 이메일 인증 완료</p><p class="text-xs text-green-600">' + email + '</p>';
-
-        // 이메일 입력 영역 다음에 추가
-        emailContainer.parentElement.appendChild(verifiedBox);
-
-        // 이메일 발송 결과 메시지 숨기기
-        const emailSendResult = document.getElementById('emailSendResult');
-        if (emailSendResult) {
-            emailSendResult.style.display = 'none';
-        }
-    }
-
-    // 타이머 시작
-    function startTimer(seconds) {
-        const timerDisplay = document.getElementById('timerDisplay');
-        const endTime = Date.now() + (seconds * 1000);
-
-        if (timerInterval) {
-            clearInterval(timerInterval);
-        }
-
-        timerInterval = setInterval(function() {
-            const now = Date.now();
-            const timeLeft = Math.floor((endTime - now) / 1000);
-
-            if (timeLeft <= 0) {
-                clearInterval(timerInterval);
-                timerDisplay.textContent = '인증 시간이 만료되었습니다. 재발송해주세요.';
-                timerDisplay.className = 'text-xs text-red-500 mt-1';
-                return;
-            }
-
-            const minutes = Math.floor(timeLeft / 60);
-            const secs = timeLeft % 60;
-            timerDisplay.textContent = '남은 시간: ' + minutes + ':' + (secs < 10 ? '0' : '') + secs;
-        }, 1000);
-    }
-
-    // 폼 제출 시 이메일 인증 확인
-    document.querySelector('form').addEventListener('submit', function(e) {
-        // hidden input에 email 값이 있으면 인증 완료로 간주
-        const hiddenEmail = document.querySelector('input[type="hidden"][name="email"]');
-
-        if (!verifiedEmailFromSession && !hiddenEmail) {
-            e.preventDefault();
-            alert('이메일 인증을 완료해주세요.');
-            const emailInput = document.getElementById('userEmail');
-            if (emailInput) {
-                emailInput.focus();
-            }
-            return false;
         }
     });
 </script>
