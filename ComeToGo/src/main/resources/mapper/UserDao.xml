@@ -6,11 +6,11 @@
 <mapper namespace="com.cometogo.ctg.user.dao.UserDao">
     <!-- 회원가입 -->
     <insert id="joinUser" parameterType="com.cometogo.ctg.user.dto.UserDto"
-            useGeneratedKeys="true" keyProperty="user_id">
+            useGeneratedKeys="true" keyProperty="userId">
         INSERT INTO ctg_users
         (id, pw, user_name, nickname, birth, phone, email, gender, user_role, temperature)
         VALUES
-            (#{id}, #{pw}, #{user_name}, #{nickname}, #{birth}, #{phone}, #{email}, #{gender},
+            (#{id}, #{pw}, #{userName}, #{nickname}, #{birth}, #{phone}, #{email}, #{gender},
              "USER", 36)
     </insert>
 
