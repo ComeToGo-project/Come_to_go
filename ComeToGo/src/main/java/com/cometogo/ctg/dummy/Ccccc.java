@@ -2,5 +2,5 @@ package com.cometogo.ctg.dummy;
 
 public class Ccccc {
 
-ddddfs
+    int a = 1;
 }

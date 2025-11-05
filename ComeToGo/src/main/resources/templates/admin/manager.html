@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>관리자 페이지</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-white min-h-screen flex flex-col">
+<div class="w-full relative flex items-center pt-10 h-20">
+    <div class="absolute left-10 top-1/2 -translate-y-1/2">
+        <img src="/img/자산%204.png" alt="로고" class="h-10"/>
+    </div>
+    <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+        <a href="/admin/management">
+      <span class="w-1/2 font-bold text-2xl border-8 border-blue-700 px-6 py-3 bg-white text-gray-900 text-center">
+        관리자 페이지
+      </span>
+        </a>
+    </div>
+</div>
+
+<!-- 콘텐츠 부분 -->
+<div class="flex-1 flex items-center justify-center">
+    <div class="bg-blue-600 p-8 w-[600px] h-[500px]">
+        <div>
+            <h2 class="bg-white text-2xl font-bold mb-2 flex items-center inline-block px-4 py-2 w-fit">관리자 대시보드</h2>
+            <div class="bg-white p-2 mb-4 w-[300px] shadow text-sm">
+                <div class="text-sm font-semibold text-center">- 신규 가입자 수 : <span th:text="${stats.newUserCount}"></span>명</div>
+                <div class="text-sm font-semibold text-center">- 누적 동호회 수 : <span th:text="${stats.groupTotalCount}"></span>개</div>
+                <div class="text-sm font-semibold text-center">- 신고 접수 : <span th:text="${stats.reportCount}"></span>건</div>
+            </div>
+        </div>
+        <div>
+            <div class="grid grid-cols-2 gap-2 w-[240px]">
+                <a href="/admin/management/user" class="bg-white px-3 py-2 text-sm font-semibold text-center block rounded">사용자 관리</a>
+                <a href="/admin/management/group" class="bg-white px-3 py-2 text-sm font-semibold text-center block rounded">동호회 관리</a>
+                <a href="/admin/management/market" class="bg-white px-3 py-2 text-sm font-semibold text-center block rounded">중고거래 관리</a>
+                <a href="/admin/management/report" class="bg-white px-3 py-2 text-sm font-semibold text-center block rounded">신고 관리</a>
+                <a href="/admin/management/system" class="bg-white px-3 py-2 text-sm font-semibold text-center block rounded">시스템 관리</a>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

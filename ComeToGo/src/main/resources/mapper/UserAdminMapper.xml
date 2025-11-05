@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.cometogo.ctg.admin.dao.UserAdminDao">
+
+    <select id="findAll" resultType="com.cometogo.ctg.admin.dto.UserAdminDto">
+        SELECT user_id, nickname, email, join_date, user_role, user_status
+        FROM ctg_users
+    </select>
+
+    <select id="searchUsers" resultType="com.cometogo.ctg.admin.dto.UserAdminDto">
+        SELECT user_id, nickname, email, join_date, user_role, user_status
+        FROM ctg_users
+        <where>
+            <if test="filterType != null and keyword != null and keyword != ''">
+                <choose>
+                    <when test="filterType == 'nickname'">
+                        nickname LIKE CONCAT('%', #{keyword}, '%')
+                    </when>
+                    <when test="filterType == 'email'">
+                        email LIKE CONCAT('%', #{keyword}, '%')
+                    </when>
+                </choose>
+            </if>
+            <if test="userStatus != null and userStatus != ''">
+                AND user_status = #{userStatus}
+            </if>
+        </where>
+        ORDER BY join_date DESC
+    </select>
+
+    <select id="findById" parameterType="long" resultType="com.cometogo.ctg.admin.dto.UserAdminDto">
+        SELECT user_id, nickname, email, join_date, user_role, user_status
+        FROM ctg_users
+        WHERE user_id = #{userId}
+    </select>
+
+    <update id="suspendUser" parameterType="long">
+        UPDATE ctg_users
+        SET user_status = 'SUSPENDED'
+        WHERE user_id = #{userId};
+    </update>
+
+    <update id="unsuspendUser" parameterType="long">
+        UPDATE ctg_users
+        SET user_status = 'ACTIVE'
+        WHERE user_id = #{userId}
+    </update>
+</mapper>

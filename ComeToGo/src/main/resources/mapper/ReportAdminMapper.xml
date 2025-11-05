@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.cometogo.ctg.admin.dao.ReportAdminDao">
+
+    <select id="findAllReports" resultType="com.cometogo.ctg.admin.dto.ReportAdminDto">
+        SELECT r.report_id,
+               u.user_name,
+               r.report_type,
+               r.reason,
+               r.created_at,
+               r.status
+        FROM ctg_report r
+                 LEFT JOIN ctg_users u ON r.target_id = u.user_id;
+
+    </select>
+
+    <update id="updateReportStatus" parameterType="map">
+        UPDATE ctg_report
+        SET status = #{status}
+        WHERE report_id = #{reportId};
+
+    </update>
+</mapper>
