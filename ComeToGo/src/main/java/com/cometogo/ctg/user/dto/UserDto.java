@@ -1,9 +1,7 @@
 package com.cometogo.ctg.user.dto;
 
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.*;
 import lombok.Data;
 
 import java.sql.Timestamp;
@@ -13,20 +11,27 @@ public class UserDto {
     private Long userId;
 
     @NotBlank(message = "아이디는 필수입니다.")
+    @Size(min = 3, message = "아이디는 3자 이상이어야 합니다.")
     private String id;
 
     @NotBlank(message = "비밀번호는 필수입니다.")
+    @Pattern(regexp = "^(?=.*[!@#$%^&*(),.?\":{}|<>]).{8,}$",
+            message = "비밀번호는 특수문자를 포함한 8자 이상이어야 합니다.")
     private String pw;
 
     @NotBlank(message = "비밀번호 확인은 필수입니다.")
     private String pwCheck;  // 비밀번호 확인용 필드, DB 미저장
 
     @NotBlank(message = "이름은 필수입니다.")
+    @Size(min = 2, message = "이름은 2글자 이상이어야 합니다.")
     private String userName;
 
     @NotBlank(message = "닉네임은 필수입니다.")
+    @Size(min = 3, message = "닉네임은 3글자 이상이어야 합니다.")
     private String nickname;
 
+    @NotNull(message = "생년월일은 필수입니다.")
+    @Past(message = "생년월일은 과거 날짜여야 합니다.")
     private java.sql.Date birth;
 
     @NotBlank(message = "전화번호는 필수입니다.")
@@ -56,3 +61,4 @@ public class UserDto {
     @Valid
     private UserAddressDto address;
 }
+

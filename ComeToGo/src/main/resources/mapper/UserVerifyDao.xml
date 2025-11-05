@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.cometogo.ctg.user.dao.UserVerifyDao">
+
+    <!-- 인증 정보 저장 -->
+    <insert id="insertVerify" parameterType="com.cometogo.ctg.user.dto.UserVerifyDto">
+        INSERT INTO ctg_verify (
+            email,
+            verify_code,
+            is_verify,
+            created_at,
+            expired_at
+        )
+        VALUES (
+                   #{email},
+                   #{verifyCode},
+                   0,
+                   DATE_ADD(NOW(), INTERVAL 9 HOUR),
+                   DATE_ADD(DATE_ADD(NOW(), INTERVAL 9 HOUR), INTERVAL 5 MINUTE)
+               )
+    </insert>
+
+    <!-- 이메일과 코드로 인증 정보 조회 -->
+    <select id="selectByEmailAndCode" resultType="com.cometogo.ctg.user.dto.UserVerifyDto">
+        SELECT
+            verify_id AS verifyId,
+            email,
+            verify_code AS verifyCode,
+            is_verify AS isVerify,
+            created_at AS createdAt,
+            expired_at AS expiredAt,
+            verified_at AS verifiedAt
+        FROM ctg_verify
+        WHERE email = #{email}
+          AND verify_code = #{verifyCode}
+        ORDER BY created_at DESC
+            LIMIT 1
+    </select>
+
+    <!-- 이메일로 최근 인증 정보 조회 -->
+    <select id="selectLatestByEmail" resultType="com.cometogo.ctg.user.dto.UserVerifyDto">
+        SELECT
+            verify_id AS verifyId,
+            email,
+            verify_code AS verifyCode,
+            is_verify AS isVerify,
+            created_at AS createdAt,
+            expired_at AS expiredAt,
+            verified_at AS verifiedAt
+        FROM ctg_verify
+        WHERE email = #{email}
+        ORDER BY created_at DESC
+            LIMIT 1
+    </select>
+
+    <!-- 인증 성공 처리 -->
+    <update id="updateVerifySuccess">
+        UPDATE ctg_verify
+        SET is_verify = 1,
+            verified_at = #{verifiedAt}
+        WHERE verify_id = #{verifyId}
+    </update>
+
+    <!-- 이메일로 기존 인증 정보 삭제 -->
+    <delete id="deleteByEmail">
+        DELETE FROM ctg_verify
+        WHERE email = #{email}
+    </delete>
+
+</mapper>

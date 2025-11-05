@@ -74,4 +74,26 @@ public class UserService {
     public String getNicknameByUserId(Long userId) {
         return userDao.findNicknameByUserId(userId);
     }
+
+    // 아이디 찾기
+    public String findIdByNameAndEmail(String userName, String email) {
+        return userDao.findIdByNameAndEmail(userName, email);
+    }
+
+    // 아이디와 이메일로 회원 존재 확인
+    public boolean checkUserExists(String userId, String email) {
+        UserDto user = userDao.findByIdAndEmail(userId, email);
+        return user != null;
+    }
+
+    // 비밀번호 업데이트
+    public boolean updatePassword(String userId, String newPassword) {
+        try {
+            String encodedPassword = passwordEncoder.encode(newPassword);
+            userDao.updatePassword(userId, encodedPassword);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
 }
