@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>비밀번호 찾기</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50">
+<div class="min-h-screen flex items-center justify-center py-12 px-4">
+    <div class="max-w-md w-full bg-white rounded-lg shadow-md p-8">
+        <h2 class="text-2xl font-bold text-center mb-6">비밀번호 찾기</h2>
+
+        <!-- 1단계: 아이디와 이메일 입력 -->
+        <div id="step1">
+            <p class="text-sm text-gray-600 mb-4">가입 시 입력한 아이디와 이메일을 입력해주세요.</p>
+
+            <div class="space-y-4">
+                <div>
+                    <label class="block font-semibold mb-1">아이디</label>
+                    <input type="text" id="userId" placeholder="아이디 입력"
+                           class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"/>
+                </div>
+
+                <div>
+                    <label class="block font-semibold mb-1">이메일</label>
+                    <input type="email" id="userEmail" placeholder="이메일 입력"
+                           class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"/>
+                </div>
+
+                <button onclick="sendVerifyCode()" id="sendCodeBtn"
+                        class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition">
+                    인증 코드 발송
+                </button>
+                <p id="sendResult" class="text-sm mt-2"></p>
+            </div>
+        </div>
+
+        <!-- 2단계: 인증 코드 입력 -->
+        <div id="step2" style="display:none;">
+            <p class="text-sm text-gray-600 mb-4">이메일로 발송된 인증 코드를 입력해주세요.</p>
+
+            <div class="space-y-4">
+                <div>
+                    <label class="block font-semibold mb-1">인증 코드</label>
+                    <input type="text" id="verifyCode" placeholder="6자리 인증 코드" maxlength="6"
+                           class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"/>
+                    <p id="timerDisplay" class="text-xs text-gray-600 mt-1"></p>
+                </div>
+
+                <button onclick="verifyCode()" class="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700 transition">
+                    인증 확인
+                </button>
+                <p id="verifyResult" class="text-sm mt-2"></p>
+            </div>
+        </div>
+
+        <!-- 3단계: 새 비밀번호 입력 -->
+        <div id="step3" style="display:none;">
+            <p class="text-sm text-gray-600 mb-4">새로운 비밀번호를 입력해주세요.</p>
+
+            <div class="space-y-4">
+                <div>
+                    <label class="block font-semibold mb-1">새 비밀번호</label>
+                    <input type="password" id="newPassword" placeholder="새 비밀번호"
+                           class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"/>
+                </div>
+
+                <div>
+                    <label class="block font-semibold mb-1">비밀번호 확인</label>
+                    <input type="password" id="confirmPassword" placeholder="비밀번호 확인"
+                           class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"/>
+                </div>
+
+                <button onclick="changePassword()" class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition">
+                    비밀번호 변경
+                </button>
+                <p id="changeResult" class="text-sm mt-2"></p>
+            </div>
+        </div>
+
+        <div class="mt-4 text-center text-sm">
+            <a href="/user/login" class="text-blue-600 hover:underline">로그인으로 돌아가기</a>
+            <span class="mx-2">|</span>
+            <a href="/user/login/find-id" class="text-blue-600 hover:underline">아이디 찾기</a>
+        </div>
+    </div>
+</div>
+
+<script>
+    let timerInterval = null;
+    let verifiedUserId = null;
+
+    // 1단계: 인증 코드 발송
+    function sendVerifyCode() {
+        const userId = document.getElementById('userId').value;
+        const email = document.getElementById('userEmail').value;
+        const sendResult = document.getElementById('sendResult');
+        const sendBtn = document.getElementById('sendCodeBtn');
+
+        if (!userId || !email) {
+            alert('아이디와 이메일을 입력해주세요.');
+            return;
+        }
+
+        sendBtn.disabled = true;
+        sendBtn.textContent = '발송 중...';
+
+        fetch('/user/send-password-reset-code', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: 'userId=' + encodeURIComponent(userId) + '&email=' + encodeURIComponent(email)
+        })
+            .then(response => response.json())
+            .then(function(data) {
+                if (data.success) {
+                    sendResult.textContent = '✓ 인증 코드가 발송되었습니다.';
+                    sendResult.className = 'text-sm mt-2 text-green-600';
+
+                    document.getElementById('step1').style.display = 'none';
+                    document.getElementById('step2').style.display = 'block';
+
+                    startTimer(300);
+                } else {
+                    sendResult.textContent = data.message || '일치하는 회원 정보를 찾을 수 없습니다.';
+                    sendResult.className = 'text-sm mt-2 text-red-600';
+                    sendBtn.disabled = false;
+                    sendBtn.textContent = '인증 코드 발송';
+                }
+            })
+            .catch(function(error) {
+                alert('오류가 발생했습니다.');
+                sendBtn.disabled = false;
+                sendBtn.textContent = '인증 코드 발송';
+            });
+    }
+
+    // 2단계: 인증 코드 확인
+    function verifyCode() {
+        const userId = document.getElementById('userId').value;
+        const email = document.getElementById('userEmail').value;
+        const code = document.getElementById('verifyCode').value;
+        const verifyResult = document.getElementById('verifyResult');
+
+        if (!code || code.length !== 6) {
+            alert('6자리 인증 코드를 입력해주세요.');
+            return;
+        }
+
+        fetch('/user/verify-password-reset-code', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: 'userId=' + encodeURIComponent(userId) + '&email=' + encodeURIComponent(email) + '&code=' + encodeURIComponent(code)
+        })
+            .then(response => response.json())
+            .then(function(data) {
+                if (data.success) {
+                    verifyResult.textContent = '✓ 인증이 완료되었습니다.';
+                    verifyResult.className = 'text-sm mt-2 text-green-600';
+
+                    if (timerInterval) {
+                        clearInterval(timerInterval);
+                    }
+
+                    verifiedUserId = userId;
+
+                    document.getElementById('step2').style.display = 'none';
+                    document.getElementById('step3').style.display = 'block';
+                } else {
+                    verifyResult.textContent = data.message || '인증 코드가 일치하지 않습니다.';
+                    verifyResult.className = 'text-sm mt-2 text-red-600';
+                }
+            })
+            .catch(function(error) {
+                alert('오류가 발생했습니다.');
+            });
+    }
+
+    // 3단계: 비밀번호 변경
+    function changePassword() {
+        const newPassword = document.getElementById('newPassword').value;
+        const confirmPassword = document.getElementById('confirmPassword').value;
+        const changeResult = document.getElementById('changeResult');
+
+        if (!newPassword || !confirmPassword) {
+            alert('비밀번호를 입력해주세요.');
+            return;
+        }
+
+        if (newPassword !== confirmPassword) {
+            alert('비밀번호가 일치하지 않습니다.');
+            return;
+        }
+
+        if (newPassword.length < 8) {
+            alert('비밀번호는 8자 이상이어야 합니다.');
+            return;
+        }
+
+        fetch('/user/reset-password', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: 'userId=' + encodeURIComponent(verifiedUserId) + '&newPassword=' + encodeURIComponent(newPassword)
+        })
+            .then(response => response.json())
+            .then(function(data) {
+                if (data.success) {
+                    alert('비밀번호가 변경되었습니다. 로그인 페이지로 이동합니다.');
+                    location.href = '/user/login';
+                } else {
+                    changeResult.textContent = data.message || '비밀번호 변경에 실패했습니다.';
+                    changeResult.className = 'text-sm mt-2 text-red-600';
+                }
+            })
+            .catch(function(error) {
+                alert('오류가 발생했습니다.');
+            });
+    }
+
+    // 타이머
+    function startTimer(seconds) {
+        const timerDisplay = document.getElementById('timerDisplay');
+        const endTime = Date.now() + (seconds * 1000);
+
+        if (timerInterval) {
+            clearInterval(timerInterval);
+        }
+
+        timerInterval = setInterval(function() {
+            const now = Date.now();
+            const timeLeft = Math.floor((endTime - now) / 1000);
+
+            if (timeLeft <= 0) {
+                clearInterval(timerInterval);
+                timerDisplay.textContent = '인증 시간이 만료되었습니다.';
+                timerDisplay.className = 'text-xs text-red-500 mt-1';
+                return;
+            }
+
+            const minutes = Math.floor(timeLeft / 60);
+            const secs = timeLeft % 60;
+            timerDisplay.textContent = '남은 시간: ' + minutes + ':' + (secs < 10 ? '0' : '') + secs;
+        }, 1000);
+    }
+</script>
+</body>
+</html>

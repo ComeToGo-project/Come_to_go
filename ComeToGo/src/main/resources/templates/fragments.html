@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8" />
+    <title>헤더 · 푸터 버튼 배치 샘플</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-white min-h-screen flex flex-col justify-between">
+
+<!-- 헤더 -->
+<header class="px-4 py-4">
+    <div class="flex justify-between items-start max-w-[1480px] mx-auto">
+
+        <!-- 1. 로고 버튼 -->
+        <div>
+            <button onclick="location.href='/'">
+                <img src="/img/ctg-image.png" alt="로고" class="w-[120px] h-auto block"/>
+            </button>
+        </div>
+
+        <!-- 2. 카테고리/알림 -->
+        <div class="flex items-center flex-1 mx-8 gap-4">
+            <button>
+                카테고리
+            </button>
+            <button>
+                알림
+            </button>
+        </div>
+
+        <!-- 로그인 시 닉네임 버튼-->
+        <div th:if="${nickname != null}">
+            <span th:text="${nickname}"></span> 님
+            <br/>
+            <button onclick="location.href='/user/logout'">
+                로그아웃
+            </button>
+        </div>
+        <!-- 3. 로그인/회원가입 버튼 묶음 -->
+        <div th:if="${nickname == null}" class="flex flex-col gap-2">
+            <button onclick="location.href='/user/login'">로그인</button>
+            <button onclick="location.href='/user/join'">회원가입</button>
+        </div>
+    </div>
+</header>
+
+<!-- 본문: 빈 공간(컨텐츠 자리) -->
+<main></main>
+
+<!-- 푸터 -->
+<footer>
+    <div>
+        <button>
+            관리자 정보 및 문의
+        </button>
+    </div>
+</footer>
+</body>
+</html>

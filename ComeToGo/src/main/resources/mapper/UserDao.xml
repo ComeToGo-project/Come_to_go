@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.cometogo.ctg.user.dao.UserDao">
+    <!-- 회원가입 -->
+    <insert id="joinUser" parameterType="UserDto"
+            useGeneratedKeys="true" keyProperty="userId">
+        INSERT INTO ctg_users
+        (id, pw, user_name, nickname, birth, phone, email, gender, user_role, temperature)
+        VALUES
+            (#{id}, #{pw}, #{userName}, #{nickname}, #{birth}, #{phone}, #{email}, #{gender},
+             "USER", 36)
+    </insert>
+
+    <!-- 아이디 중복검사 -->
+    <select id="countById" parameterType="string" resultType="int">
+        SELECT COUNT(*) FROM ctg_users WHERE id = #{id}
+    </select>
+
+    <!-- 이메일 중복검사 -->
+    <select id="countByEmail" parameterType="string" resultType="int">
+        SELECT COUNT(*) FROM ctg_users WHERE email = #{email}
+    </select>
+
+    <!-- 닉네임 중복검사 -->
+    <select id="countByNickname" parameterType="string" resultType="int">
+        SELECT COUNT(*) FROM ctg_users WHERE nickname = #{nickname}
+    </select>
+
+    <!-- 로그인-->
+    <select id="findUserById" parameterType="string" resultType="UserDto">
+        SELECT * FROM ctg_users WHERE id = #{id}
+    </select>
+
+    <!-- 닉네임 찾기-->
+    <select id="findNicknameByUserId" parameterType="long" resultType="string">
+        SELECT nickname FROM ctg_users WHERE user_id = #{userId}
+    </select>
+</mapper>
