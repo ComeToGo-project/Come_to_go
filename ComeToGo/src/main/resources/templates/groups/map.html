@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>지도 선택</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- ✅ 카카오맵 JS SDK (본인의 AppKey로 교체 필요) -->
+    <script type="text/javascript"
+            src="//dapi.kakao.com/v2/maps/sdk.js?appkey=169fa1a447cc0ad79ae330dab1fe8bc0&libraries=services"></script>
+
+    <style>
+        #map {
+            width: 100%;
+            height: 80vh;
+        }
+    </style>
+</head>
+
+<body class="flex flex-col items-center justify-center p-4 space-y-4">
+<!-- 검색창 -->
+<div class="flex space-x-2 w-full max-w-xl">
+    <input id="keyword" type="text" placeholder="주소 또는 장소명 검색"
+           class="flex-grow border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+    <button id="searchBtn"
+            class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded">
+        검색
+    </button>
+</div>
+
+<!-- 지도 -->
+<div id="map"></div>
+
+<p id="addressInfo" class="text-sm text-gray-600 mt-2">
+    지도를 클릭하거나 검색 결과에서 주소를 선택하세요.
+</p>
+
+<button id="selectBtn"
+        class="mt-4 bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-2 rounded">
+    이 위치 선택
+</button>
+
+<script>
+    window.onload = function() {
+        if (typeof kakao === 'undefined') {
+            alert("⚠️ Kakao SDK 로드 실패! AppKey나 도메인 등록 확인!");
+            return;
+        }
+
+        // 지도 초기화
+        const mapContainer = document.getElementById('map');
+        const mapOption = {
+            center: new kakao.maps.LatLng(37.5665, 126.9780), // 서울시청
+            level: 3
+        };
+        const map = new kakao.maps.Map(mapContainer, mapOption);
+
+        // 서비스 객체들
+        const geocoder = new kakao.maps.services.Geocoder();
+        const places = new kakao.maps.services.Places();
+
+        // 상태 변수
+        let markers = [];
+        let selectedAddress = "";
+        let addressParts = { city: "", district: "", neighborhood: "" };
+
+        // 마커 추가
+        function addMarker(position) {
+            const marker = new kakao.maps.Marker({ position, map });
+            markers.push(marker);
+            return marker;
+        }
+
+        // 기존 마커 제거
+        function removeMarkers() {
+            markers.forEach(m => m.setMap(null));
+            markers = [];
+        }
+
+        // 장소 검색 결과 마커 표시
+        function displayMarker(place) {
+            const position = new kakao.maps.LatLng(place.y, place.x);
+            const marker = addMarker(position);
+
+            kakao.maps.event.addListener(marker, 'click', function() {
+                selectedAddress = place.place_name;
+                document.getElementById('addressInfo').innerText = "선택한 주소: " + selectedAddress;
+
+                // 좌표 기준으로 행정주소 변환
+                geocoder.coord2Address(place.x, place.y, function(result, status) {
+                    if (status === kakao.maps.services.Status.OK) {
+                        const addr = result[0].address;
+                        addressParts.city = addr.region_1depth_name || "";
+                        addressParts.district = addr.region_2depth_name || "";
+                        addressParts.neighborhood = addr.region_3depth_name || "";
+                    }
+                });
+                map.setCenter(position);
+            });
+        }
+
+        // 장소 검색 기능
+        function searchPlaces() {
+            const keyword = document.getElementById('keyword').value.trim();
+            if (!keyword) {
+                alert("검색어를 입력해주세요!");
+                return;
+            }
+
+            places.keywordSearch(keyword, function(data, status) {
+                if (status === kakao.maps.services.Status.OK) {
+                    removeMarkers();
+                    const bounds = new kakao.maps.LatLngBounds();
+                    data.forEach(item => {
+                        displayMarker(item);
+                        bounds.extend(new kakao.maps.LatLng(item.y, item.x));
+                    });
+                    map.setBounds(bounds);
+                    selectedAddress = "";
+                    document.getElementById('addressInfo').innerText = "검색 결과에서 주소를 선택하세요.";
+                } else {
+                    alert("검색 결과가 없습니다.");
+                }
+            });
+        }
+
+        // 지도 클릭 시 주소 선택
+        kakao.maps.event.addListener(map, 'click', function(mouseEvent) {
+            const latlng = mouseEvent.latLng;
+            removeMarkers();
+            addMarker(latlng);
+
+            geocoder.coord2Address(latlng.getLng(), latlng.getLat(), function(result, status) {
+                if (status === kakao.maps.services.Status.OK) {
+                    selectedAddress = result[0].address.address_name;
+                    document.getElementById('addressInfo').innerText = "선택한 주소: " + selectedAddress;
+
+                    // 시/구/동 분리 저장
+                    const addr = result[0].address;
+                    addressParts.city = addr.region_1depth_name || "";
+                    addressParts.district = addr.region_2depth_name || "";
+                    addressParts.neighborhood = addr.region_3depth_name || "";
+                } else {
+                    selectedAddress = "";
+                    document.getElementById('addressInfo').innerText = "주소 정보를 가져올 수 없습니다.";
+                }
+            });
+        });
+
+        // 버튼 이벤트 등록
+        document.getElementById('searchBtn').addEventListener('click', searchPlaces);
+
+        // ✅ "이 위치 선택" 클릭 시 부모창에 값 전달
+        document.getElementById('selectBtn').addEventListener('click', function() {
+            if (!selectedAddress) {
+                alert("지도 클릭 또는 검색 결과에서 주소를 선택해주세요!");
+                return;
+            }
+
+            // 부모창이 열려 있는지 확인 후 값 전달
+            if (window.opener && !window.opener.closed) {
+                window.opener.setAddress(
+                    addressParts.city,
+                    addressParts.district,
+                    addressParts.neighborhood
+                );
+                window.close(); // 팝업 닫기
+            } else {
+                alert("부모창이 닫혀있습니다.");
+            }
+        });
+    };
+</script>
+</body>
+</html>

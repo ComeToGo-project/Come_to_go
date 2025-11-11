@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>마이페이지 - 내 동호회</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 min-h-screen flex flex-col">
+
+<!-- ✅ 공통 헤더 -->
+<div th:replace="fragments :: header"></div>
+
+<!-- ✅ 메인 -->
+<main class="flex flex-1 max-w-7xl mx-auto w-full py-10 px-6 gap-6">
+
+    <!-- ✅ 왼쪽 사이드바 -->
+    <aside class="w-64 bg-white border border-gray-200 rounded-2xl shadow p-5 flex flex-col">
+        <h3 class="text-lg font-semibold text-gray-800 flex items-center justify-between mb-4">
+            내 동호회
+            <button class="text-sm text-gray-500 hover:text-indigo-500">
+                ▼
+            </button>
+        </h3>
+
+        <div class="text-sm text-gray-600 mb-3">(가입한 동호회)</div>
+
+        <!-- 가입한 동호회 리스트 -->
+        <ul class="space-y-2 overflow-y-auto">
+            <li th:each="group : ${myGroups}">
+                <button
+                        th:text="${group.groupName}"
+                        th:data-group-id="${group.groupId}"
+                        class="w-full text-left px-3 py-2 rounded-lg bg-gray-100 hover:bg-indigo-100 text-gray-800 font-medium transition"
+                        onclick="selectGroup(this)">
+                    동호회 이름
+                </button>
+            </li>
+        </ul>
+    </aside>
+
+    <!-- ✅ 오른쪽 메인 영역 -->
+    <section class="flex-1 bg-white border border-gray-200 rounded-2xl shadow p-8">
+        <!-- 선택된 동호회 정보 -->
+        <div id="group-info" class="mb-8">
+            <h2 id="group-name" class="text-2xl font-bold text-gray-800">동호회를 선택해주세요</h2>
+        </div>
+
+        <!-- 메뉴 버튼 -->
+        <div id="group-menu" class="flex flex-wrap gap-4">
+            <a href="#" class="bg-indigo-700 text-white px-6 py-3 rounded-full font-medium hover:bg-indigo-800 transition">일정</a>
+            <a href="#" class="bg-indigo-700 text-white px-6 py-3 rounded-full font-medium hover:bg-indigo-800 transition">게시글</a>
+            <a href="#" class="bg-indigo-700 text-white px-6 py-3 rounded-full font-medium hover:bg-indigo-800 transition">채팅</a>
+            <a href="#" class="bg-indigo-700 text-white px-6 py-3 rounded-full font-medium hover:bg-indigo-800 transition">중고거래</a>
+        </div>
+    </section>
+
+</main>
+
+<!-- ✅ 공통 푸터 -->
+<div th:replace="fragments :: footer"></div>
+
+<script>
+    // 왼쪽 목록에서 동호회 선택 시 오른쪽 이름 변경
+    function selectGroup(button) {
+        const name = button.innerText;
+        const id = button.getAttribute("data-group-id");
+
+        document.getElementById("group-name").innerText = name;
+
+        // 동적으로 버튼에 링크 추가 (예: 그룹별 페이지 이동)
+        document.querySelectorAll("#group-menu a")[0].href = `/groups/${id}/schedule`;
+        document.querySelectorAll("#group-menu a")[1].href = `/groups/${id}/posts`;
+        document.querySelectorAll("#group-menu a")[2].href = `/groups/${id}/chat`;
+        document.querySelectorAll("#group-menu a")[3].href = `/groups/${id}/market`;
+    }
+</script>
+
+</body>
+</html>
