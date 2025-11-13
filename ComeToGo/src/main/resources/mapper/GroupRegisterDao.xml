@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.demo.dao.GroupRegisterDao">
+
+    <!-- 가입 신청 등록 -->
+    <insert id="insertRegister" useGeneratedKeys="true" keyProperty="groupJoinId">
+        INSERT INTO ctg_group_join (
+            user_id, group_id, message, join_status
+        )
+        VALUES (
+                   #{userId}, #{groupId}, #{message}, 'PENDING'
+               )
+    </insert>
+
+    <!-- 그룹별 가입 신청 목록 -->
+    <select id="findByGroupId" resultType="com.cometogo.ctg.group.dto.GroupRegisterDto">
+        SELECT
+            group_join_id AS groupJoinId,
+            user_id AS userId,
+            group_id AS groupId,
+            message,
+            join_status AS joinStatus,
+            created_at AS createdAt,
+            processed_at AS processedAt,
+            processed_by AS processedBy
+        FROM ctg_group_join
+        WHERE group_id = #{groupId}
+        ORDER BY created_at DESC
+    </select>
+
+    <!-- 특정 유저의 특정 그룹 신청 여부 확인 -->
+    <select id="findByUserAndGroup" resultType="com.cometogo.ctg.group.dto.GroupRegisterDto">
+        SELECT
+            group_join_id AS groupJoinId,
+            user_id AS userId,
+            group_id AS groupId,
+            message,
+            join_status AS joinStatus,
+            created_at AS createdAt,
+            processed_at AS processedAt,
+            processed_by AS processedBy
+        FROM ctg_group_join
+        WHERE user_id = #{userId}
+          AND group_id = #{groupId}
+    </select>
+
+    <!-- 상태 변경 (승인 / 거절) -->
+    <update id="updateStatus">
+        UPDATE ctg_group_join
+        SET
+            join_status = #{joinStatus},
+            processed_at = NOW(),
+            processed_by = #{processedBy}
+        WHERE group_join_id = #{groupJoinId}
+    </update>
+
+</mapper>

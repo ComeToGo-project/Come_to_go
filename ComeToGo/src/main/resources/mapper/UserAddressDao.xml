@@ -5,7 +5,7 @@
 
 <mapper namespace="com.cometogo.ctg.user.dao.UserAddressDao">
 
-<insert id="joinUserAddress" parameterType="UserAddressDto">
+<insert id="joinUserAddress" parameterType="com.cometogo.ctg.user.dto.UserAddressDto">
     INSERT INTO ctg_address (user_id, city, district, neighborhood)
     VALUES (#{userId}, #{city}, #{district}, #{neighborhood})
 </insert>

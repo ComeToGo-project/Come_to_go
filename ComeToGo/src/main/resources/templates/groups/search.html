@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>동호회 검색</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen">
+<div th:replace="fragments :: header"></div>
+<div class="container mx-auto p-4 md:p-8">
+
+    <!-- ① 지역 드롭다운 -->
+    <div class="mb-4">
+        <form th:action="@{/groups/search}" method="get" class="flex flex-col md:flex-row md:items-center space-y-2 md:space-y-0 md:space-x-4">
+
+            <!-- 지역 선택 -->
+            <select name="region" id="region"
+                    class="rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                    th:value="${param.region}">
+                <option value="">전 지역</option>
+                <option value="seoul" th:selected="${param.region == 'seoul'}">서울</option>
+                <option value="busan" th:selected="${param.region == 'busan'}">부산</option>
+                <option value="daegu" th:selected="${param.region == 'daegu'}">대구</option>
+                <!-- 필요한 지역 추가 -->
+            </select>
+
+            <!-- ② 검색창 -->
+            <input type="text" name="keyword" id="keyword" placeholder="동호회 이름 또는 소개 검색"
+                   class="flex-grow rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                   th:value="${param.keyword}"/>
+
+            <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition">
+                검색
+            </button>
+        </form>
+    </div>
+
+    <div class="flex space-x-6">
+
+        <!-- ③ 필터 목록 (카테고리, 정렬) -->
+        <aside class="w-48 bg-white rounded-lg shadow p-4 space-y-4">
+            <h3 class="font-semibold text-lg mb-2">필터 목록</h3>
+
+            <!-- 카테고리 필터 -->
+            <div>
+                <p class="font-semibold mb-1">카테고리</p>
+                <ul class="space-y-1 text-gray-700 text-sm">
+                    <li><a th:href="@{/groups/search(category='sports')}" class="hover:underline">스포츠</a></li>
+                    <li><a th:href="@{/groups/search(category='music')}" class="hover:underline">음악</a></li>
+                    <li><a th:href="@{/groups/search(category='study')}" class="hover:underline">스터디</a></li>
+                    <!-- 카테고리 추가 -->
+                </ul>
+            </div>
+
+            <!-- 정렬 필터 -->
+            <div>
+                <p class="font-semibold mb-1">정렬</p>
+                <ul class="space-y-1 text-gray-700 text-sm">
+                    <li><a th:href="@{/groups/search(sort='latest')}" class="hover:underline">최신순</a></li>
+                    <li><a th:href="@{/groups/search(sort='popular')}" class="hover:underline">인기순</a></li>
+                    <!-- 정렬 추가 -->
+                </ul>
+            </div>
+        </aside>
+
+        <!-- ④ 검색 결과 목록 -->
+        <section class="flex-1 bg-white rounded-lg shadow p-6">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-semibold">검색 동호회 목록</h2>
+                <a th:href="@{/groups/create}"
+                   class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-lg transition duration-300">
+                    동호회 생성
+                </a>
+            </div>
+
+            <div th:if="${groups == null or #lists.isEmpty(groups)}" class="text-gray-500 text-center py-10">
+                검색 결과가 없습니다.
+            </div>
+
+            <ul class="space-y-4" th:if="${groups != null}">
+                <li th:each="group : ${groups}" class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition">
+                    <a th:href="@{/groups/{id}/detail(id=${group.groupId})}" class="text-blue-600 hover:underline font-semibold text-lg"
+                       th:text="${group.groupName}">동호회 이름</a>
+                    <p class="text-gray-600 mt-1" th:text="${group.intro}">동호회 소개</p>
+                    <p class="text-gray-400 text-sm mt-2">카테고리 ID: <span th:text="${group.categoryId}"></span></p>
+                    <p class="text-gray-400 text-sm">상태: <span th:text="${group.groupStatus}"></span></p>
+                </li>
+            </ul>
+        </section>
+    </div>
+</div>
+<div th:replace="fragments :: footer"></div>
+</body>
+</html>

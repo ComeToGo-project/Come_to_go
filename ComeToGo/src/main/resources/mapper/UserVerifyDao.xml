@@ -5,7 +5,7 @@
 <mapper namespace="com.cometogo.ctg.user.dao.UserVerifyDao">
 
     <!-- 인증 정보 저장 -->
-    <insert id="insertVerify" parameterType="UserVerifyDto">
+    <insert id="insertVerify" parameterType="com.cometogo.ctg.user.dto.UserVerifyDto">
         INSERT INTO ctg_verify (
             email,
             verify_code,
@@ -23,7 +23,7 @@
     </insert>
 
     <!-- 이메일과 코드로 인증 정보 조회 -->
-    <select id="selectByEmailAndCode" resultType="UserVerifyDto">
+    <select id="selectByEmailAndCode" resultType="com.cometogo.ctg.user.dto.UserVerifyDto">
         SELECT
             verify_id AS verifyId,
             email,
@@ -40,7 +40,7 @@
     </select>
 
     <!-- 이메일로 최근 인증 정보 조회 -->
-    <select id="selectLatestByEmail" resultType="UserVerifyDto">
+    <select id="selectLatestByEmail" resultType="com.cometogo.ctg.user.dto.UserVerifyDto">
         SELECT
             verify_id AS verifyId,
             email,

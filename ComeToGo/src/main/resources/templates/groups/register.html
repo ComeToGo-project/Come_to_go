@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <title>동호회 가입 신청</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-50 min-h-screen flex flex-col">
+<!-- ✅ 헤더 -->
+<div th:replace="fragments :: header"></div>
+
+<!-- ✅ 메인 -->
+<main class="flex-1 flex justify-center items-center py-16 px-4">
+  <section class="bg-white shadow-lg rounded-2xl max-w-3xl w-full p-10 border border-gray-200">
+    <h2 class="text-3xl font-bold text-gray-800 mb-6">동호회 가입신청</h2>
+    <p class="text-gray-600 mb-8 text-sm leading-relaxed">
+      해당 양식에 맞춰 아래를 입력해주세요! <br />
+      1. 동호회 회장이 알아서 추가 예정
+    </p>
+
+    <!-- ✅ 가입 신청 폼 -->
+    <form th:action="@{/groups/{id}/register(id=${groupId})}" method="post" class="space-y-6">
+        <textarea name="message"
+                  rows="5"
+                  placeholder="텍스트 입력"
+                  class="w-full border-2 border-gray-300 rounded-xl p-4 focus:outline-none focus:border-indigo-500 text-gray-800 text-lg resize-none"></textarea>
+
+      <button type="submit"
+              class="w-full bg-red-600 text-white py-3 rounded-xl font-semibold text-lg hover:bg-red-700 transition">
+        가입 신청하기
+      </button>
+    </form>
+  </section>
+</main>
+
+<!-- ✅ 푸터 -->
+<div th:replace="fragments :: footer"></div>
+</body>
+</html>
