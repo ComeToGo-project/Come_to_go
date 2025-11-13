@@ -5,12 +5,7 @@
 
 <mapper namespace="com.cometogo.ctg.admin.dao.UserAdminDao">
 
-    <select id="findAll" resultType="com.cometogo.ctg.admin.dto.UserAdminDto">
-        SELECT user_id, nickname, email, join_date, user_role, user_status
-        FROM ctg_users
-    </select>
-
-    <select id="searchUsers" resultType="com.cometogo.ctg.admin.dto.UserAdminDto">
+    <select id="users" resultType="com.cometogo.ctg.admin.dto.UserAdminDto">
         SELECT user_id, nickname, email, join_date, user_role, user_status
         FROM ctg_users
         <where>

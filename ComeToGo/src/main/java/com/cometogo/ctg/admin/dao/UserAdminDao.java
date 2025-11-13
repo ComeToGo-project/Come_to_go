@@ -8,15 +8,14 @@ import java.util.List;
 
 @Mapper
 public interface UserAdminDao {
-    List<UserAdminDto> findAll();
 
-    List<UserAdminDto> searchUsers(
+    List<UserAdminDto> users(
             @Param("filterType") String filterType,
             @Param("keyword") String keyword,
             @Param("userStatus") String userStatus
     );
 
-    UserAdminDto findById(@Param("userId") Long userId);
+//    UserAdminDto findByUsername(@Param("userId") Long userId);
 
     int suspendUser(@Param("userId") Long userId);
 

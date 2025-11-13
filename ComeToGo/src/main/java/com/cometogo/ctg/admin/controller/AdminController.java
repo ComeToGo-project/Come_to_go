@@ -1,8 +1,10 @@
 package com.cometogo.ctg.admin.controller;
 
 import com.cometogo.ctg.admin.dao.AdminDashboardDao;
+import com.cometogo.ctg.admin.dao.GroupAdminDao;
 import com.cometogo.ctg.admin.dao.UserAdminDao;
 import com.cometogo.ctg.admin.dto.AdminDashboardStatsDto;
+import com.cometogo.ctg.admin.dto.GroupAdminDto;
 import com.cometogo.ctg.admin.dto.UserAdminDto;
 import com.cometogo.ctg.admin.service.*;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +27,7 @@ public class AdminController {
     private final SystemAdminService systemAdminService;
     private final MarketAdminService marketAdminService;
     private final ReportAdminService reportAdminService;
+    private final GroupAdminDao groupAdminDao;
 
     @GetMapping
     public String adminPage(Model model) {
@@ -40,27 +43,32 @@ public class AdminController {
             @RequestParam(required = false) String userStatus,
             Model model
     ) {
-        List<UserAdminDto> userList = userAdminDao.searchUsers(filterType, keyword, userStatus);
+        List<UserAdminDto> userList = userAdminDao.users(filterType, keyword, userStatus);
         model.addAttribute("userList", userList);
         return "admin/user_management";
     }
 
     @PostMapping("/user/{userId}/suspend")
-    public String suspendUser(@PathVariable("userId") Long userId) {
-        userAdminService.suspendUser(userId);
+    public String suspendUser(@PathVariable("userId") Long userId,
+                              @RequestParam("banDays") int banDays) {
+        userAdminService.banUser(userId, banDays);
         return "redirect:/admin/management/user";
     }
 
     @PostMapping("/user/{userId}/unsuspend")
     public String unsuspendUser(@PathVariable("userId") Long userId) {
-        userAdminService.unsuspendUser(userId);
+        userAdminService.unbanUser(userId);
         return "redirect:/admin/management/user";
     }
 
     //동호회 관리
     @GetMapping("/group")
-    public String groupManagementPage(Model model) {
-        model.addAttribute("groupList", groupAdminService.getAllGroups());
+    public String groupManagementPage(
+            @RequestParam(required = false) String filterType,
+            @RequestParam(required = false) String keyword,
+            Model model) {
+        List<GroupAdminDto> groupList = groupAdminDao.groups(filterType, keyword);
+        model.addAttribute("groupList", groupList);
         return "admin/group_management";
     }
 

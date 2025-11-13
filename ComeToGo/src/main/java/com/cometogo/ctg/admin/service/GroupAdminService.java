@@ -4,6 +4,7 @@ import com.cometogo.ctg.admin.dao.GroupAdminDao;
 import com.cometogo.ctg.admin.dto.GroupAdminDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -13,11 +14,15 @@ public class GroupAdminService {
 
     private final GroupAdminDao groupAdminDao;
 
-    public List<GroupAdminDto> getAllGroups() {
-        return groupAdminDao.findAllGroups();
-    }
-
+    @Transactional
     public void deleteGroup(Long groupId) {
+        groupAdminDao.deleteGroupLocations(groupId);
+        groupAdminDao.deleteGroupUsers(groupId);
+        groupAdminDao.deleteGroupBoards(groupId);
+        groupAdminDao.deleteGroupJoins(groupId);
+        groupAdminDao.deleteGroupChats(groupId);
+        groupAdminDao.deleteGroupMarkets(groupId);
+        groupAdminDao.deleteGroupSchedules(groupId);
         groupAdminDao.deleteGroup(groupId);
     }
 
