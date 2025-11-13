@@ -5,6 +5,14 @@
 
 <mapper namespace="com.cometogo.ctg.admin.dao.UserBanDao">
 
+    <select id="findActiveBanByUser" parameterType="long" resultType="com.cometogo.ctg.admin.dto.UserBanDto">
+        SELECT *
+        FROM ctg_user_ban
+        WHERE user_id = #{userId}
+          AND ban_status = 'BAN'
+        ORDER BY ban_end DESC LIMIT 1;
+    </select>
+
     <insert id="insertUserBan" parameterType="com.cometogo.ctg.admin.dto.UserBanDto" useGeneratedKeys="true" keyProperty="banId">
         INSERT INTO ctg_user_ban (user_id, ban_start, ban_end, ban_status)
         VALUES (#{userId}, #{banStart}, #{banEnd}, #{banStatus});

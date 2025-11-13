@@ -10,6 +10,8 @@ import java.util.List;
 @Mapper
 public interface UserBanDao {
 
+    UserBanDto findActiveBanByUser(@Param("userId") Long userId);
+
     int insertUserBan(UserBanDto banDto);
 
     int updateBanStatusByUser(@Param("userId") Long userId, @Param("status") String newStatus);

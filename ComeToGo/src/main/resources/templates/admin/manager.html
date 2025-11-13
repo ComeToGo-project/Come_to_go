@@ -8,7 +8,9 @@
 <body class="bg-white min-h-screen flex flex-col">
 <div class="w-full relative flex items-center pt-10 h-20">
     <div class="absolute left-10 top-1/2 -translate-y-1/2">
-        <img src="/img/자산%204.png" alt="로고" class="h-10"/>
+        <a href="/">
+            <img src="/img/자산%204.png" alt="로고" class="h-10"/>
+        </a>
     </div>
     <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
         <a href="/admin/management">
@@ -25,18 +27,28 @@
         <div>
             <h2 class="bg-white text-2xl font-bold mb-2 flex items-center inline-block px-4 py-2 w-fit">관리자 대시보드</h2>
             <div class="bg-white p-2 mb-4 w-[300px] shadow text-sm">
-                <div class="text-sm font-semibold text-center">- 신규 가입자 수 : <span th:text="${stats.newUserCount}"></span>명</div>
-                <div class="text-sm font-semibold text-center">- 누적 동호회 수 : <span th:text="${stats.groupTotalCount}"></span>개</div>
-                <div class="text-sm font-semibold text-center">- 신고 접수 : <span th:text="${stats.reportCount}"></span>건</div>
+                <div class="text-sm font-semibold text-center">- 신규 가입자 수 : <span
+                        th:text="${stats.newUserCount}"></span>명
+                </div>
+                <div class="text-sm font-semibold text-center">- 누적 동호회 수 : <span
+                        th:text="${stats.groupTotalCount}"></span>개
+                </div>
+                <div class="text-sm font-semibold text-center">- 신고 접수 : <span th:text="${stats.reportCount}"></span>건
+                </div>
             </div>
         </div>
         <div>
             <div class="grid grid-cols-2 gap-2 w-[240px]">
-                <a href="/admin/management/user" class="bg-white px-3 py-2 text-sm font-semibold text-center block rounded">사용자 관리</a>
-                <a href="/admin/management/group" class="bg-white px-3 py-2 text-sm font-semibold text-center block rounded">동호회 관리</a>
-                <a href="/admin/management/market" class="bg-white px-3 py-2 text-sm font-semibold text-center block rounded">중고거래 관리</a>
-                <a href="/admin/management/report" class="bg-white px-3 py-2 text-sm font-semibold text-center block rounded">신고 관리</a>
-                <a href="/admin/management/system" class="bg-white px-3 py-2 text-sm font-semibold text-center block rounded">시스템 관리</a>
+                <a href="/admin/management/user"
+                   class="bg-white px-3 py-2 text-sm font-semibold text-center block rounded">사용자 관리</a>
+                <a href="/admin/management/group"
+                   class="bg-white px-3 py-2 text-sm font-semibold text-center block rounded">동호회 관리</a>
+                <a href="/admin/management/market"
+                   class="bg-white px-3 py-2 text-sm font-semibold text-center block rounded">중고거래 관리</a>
+                <a href="/admin/management/report"
+                   class="bg-white px-3 py-2 text-sm font-semibold text-center block rounded">신고 관리</a>
+                <a href="/admin/management/system"
+                   class="bg-white px-3 py-2 text-sm font-semibold text-center block rounded">시스템 관리</a>
             </div>
         </div>
     </div>

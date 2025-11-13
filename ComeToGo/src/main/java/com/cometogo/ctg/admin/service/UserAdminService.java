@@ -9,15 +9,24 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 
+import static java.time.LocalDateTime.*;
+
 @Service
 @RequiredArgsConstructor
 public class UserAdminService {
     private final UserAdminDao userAdminDao;
     private final UserBanDao userBanDao;
 
+    public void checkAndReleaseUserBan(Long userId) {
+        UserBanDto banInfo = userBanDao.findActiveBanByUser(userId);
+        if (banInfo != null && banInfo.getBanEnd().isBefore(now())) {
+            unbanUser(userId);
+        }
+    }
+
     @Transactional
     public void banUser(Long userId, int banDays) {
-        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime now = now();
         LocalDateTime banEnd = now.plusDays(banDays);
 
         UserBanDto userBanDto = new UserBanDto();
