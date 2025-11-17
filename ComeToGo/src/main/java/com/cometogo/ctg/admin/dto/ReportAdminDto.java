@@ -10,5 +10,5 @@ public class ReportAdminDto {
     private String reportType;
     private String reason;
     private String createdAt;
-    private String status;
+    private String reportStatus;
 }

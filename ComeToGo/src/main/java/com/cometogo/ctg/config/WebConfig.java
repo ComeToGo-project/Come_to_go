@@ -9,11 +9,15 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @RequiredArgsConstructor
 public class WebConfig implements WebMvcConfigurer {
 
-    private final UserInterceptor userInterceptor;
+    private final UserBanReleaseInterceptor userBanReleaseInterceptor;
+    private final AdminInterceptor adminInterceptor;
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(userInterceptor)
+        registry.addInterceptor(userBanReleaseInterceptor)
+                .addPathPatterns("/**");
+
+        registry.addInterceptor(adminInterceptor)
                 .addPathPatterns("/admin/management/**");
     }
 }

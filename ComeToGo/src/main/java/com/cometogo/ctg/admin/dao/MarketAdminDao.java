@@ -8,7 +8,13 @@ import java.util.List;
 
 @Mapper
 public interface MarketAdminDao {
-    List<MarketAdminDto> findAllMarketItems();
+    List<MarketAdminDto> findMarketItems(
+            @Param("filterType") String filterType,
+            @Param("keyword") String keyword,
+            @Param("status") String status
+    );
 
-    int deleteMarketItem(@Param("itemId") Long boardId);
+    int deleteItemImages(@Param("itemId") Long itemId);
+    int deleteMarketChats(@Param("itemId") Long itemId);
+    int deleteMarketItem(@Param("itemId") Long itemId);
 }

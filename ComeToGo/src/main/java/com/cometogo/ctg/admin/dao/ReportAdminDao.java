@@ -8,7 +8,13 @@ import java.util.List;
 
 @Mapper
 public interface ReportAdminDao {
-    List<ReportAdminDto> findAllReports();
+    List<ReportAdminDto> findReports(
+            @Param("keyword") String keyword,
+            @Param("reportType") String reportType,
+            @Param("reportStatus") String reportStatus
+    );
 
-    int updateReportStatus(@Param("reportId") Long reportId, @Param("status") String status);
+    int updateReportStatus(
+            @Param("reportId") Long reportId,
+            @Param("reportStatus") String reportStatus);
 }

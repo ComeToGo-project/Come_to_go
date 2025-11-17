@@ -121,9 +121,6 @@ public class UserController {
         if (user != null) {
             session.setAttribute("user_id", user.getUserId());
             session.setAttribute("userRole", user.getUserRole());
-            System.out.println("로그인 성공");
-            System.out.println(session.getAttribute("user_id"));
-            System.out.println(user.getUserId());
             return "redirect:/"; // 로그인 성공 후 이동 페이지
         }
 

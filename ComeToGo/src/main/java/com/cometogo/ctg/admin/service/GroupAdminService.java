@@ -14,6 +14,10 @@ public class GroupAdminService {
 
     private final GroupAdminDao groupAdminDao;
 
+    public List<GroupAdminDto> getGroups(String filterType, String keyword) {
+        return groupAdminDao.findGroups(filterType, keyword);
+    }
+
     @Transactional
     public void deleteGroup(Long groupId) {
         groupAdminDao.deleteGroupLocations(groupId);

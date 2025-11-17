@@ -77,7 +77,8 @@
             <option value="nickname">닉네임</option>
             <option value="email">이메일</option>
         </select>
-        <input type="text" name="keyword" placeholder="검색창" class="rounded bg-violet-300 px-5 py-2 w-[320px] focus:outline-none">
+        <input type="text" name="keyword" placeholder="검색창"
+               class="rounded bg-violet-300 px-5 py-2 w-[320px] focus:outline-none">
         <button type="submit" class="bg-violet-400 text-white rounded px-4 py-2 font-bold">검색</button>
         <select name="userStatus" class="rounded bg-white text-blue-600 font-bold px-2 py-2 ml-6">
             <option value="">전체</option>
@@ -105,10 +106,18 @@
                 <td th:text="${user.nickname}" class="py-2"></td>
                 <td th:text="${user.email}" class="py-2"></td>
                 <td th:text="${user.joinDate}" class="py-2"></td>
-                <td th:text="${user.userRole}" class="py-2"></td>
-                <td>
+                <td class="py-2">
+                    <span th:if="${user.userRole == 'USER'}">회원</span>
+                    <span th:if="${user.userRole == 'ADMIN'}">관리자</span>
+                </td>
+                <td class="py-2">
                     <span th:if="${user.userStatus == 'ACTIVE'}">정상</span>
-                    <span th:if="${user.userStatus == 'SUSPENDED'}">정지</span>
+                    <span th:if="${user.userStatus == 'SUSPENDED'}">
+                        정지
+                        <span th:if="${user.banDaysLeft != null}">
+                            (<span th:text="${user.banDaysLeft}"/>일 남음)
+                        </span>
+                    </span>
                 </td>
                 <td class="py-2 space-x-2">
                     <form th:action="@{'/admin/management/user/' + ${user.userId} + '/suspend'}"

@@ -1,11 +1,7 @@
 package com.cometogo.ctg.admin.controller;
 
-import com.cometogo.ctg.admin.dao.AdminDashboardDao;
-import com.cometogo.ctg.admin.dao.GroupAdminDao;
-import com.cometogo.ctg.admin.dao.UserAdminDao;
-import com.cometogo.ctg.admin.dto.AdminDashboardStatsDto;
-import com.cometogo.ctg.admin.dto.GroupAdminDto;
-import com.cometogo.ctg.admin.dto.UserAdminDto;
+import com.cometogo.ctg.admin.dao.*;
+import com.cometogo.ctg.admin.dto.*;
 import com.cometogo.ctg.admin.service.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -13,6 +9,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 @Controller
@@ -28,6 +25,8 @@ public class AdminController {
     private final MarketAdminService marketAdminService;
     private final ReportAdminService reportAdminService;
     private final GroupAdminDao groupAdminDao;
+    private final MarketAdminDao marketAdminDao;
+    private final ReportAdminDao reportAdminDao;
 
     @GetMapping
     public String adminPage(Model model) {
@@ -43,7 +42,7 @@ public class AdminController {
             @RequestParam(required = false) String userStatus,
             Model model
     ) {
-        List<UserAdminDto> userList = userAdminDao.users(filterType, keyword, userStatus);
+        List<UserAdminDto> userList = userAdminService.getUsers(filterType, keyword, userStatus);
         model.addAttribute("userList", userList);
         return "admin/user_management";
     }
@@ -67,7 +66,7 @@ public class AdminController {
             @RequestParam(required = false) String filterType,
             @RequestParam(required = false) String keyword,
             Model model) {
-        List<GroupAdminDto> groupList = groupAdminDao.groups(filterType, keyword);
+        List<GroupAdminDto> groupList = groupAdminService.getGroups(filterType, keyword);
         model.addAttribute("groupList", groupList);
         return "admin/group_management";
     }
@@ -86,8 +85,13 @@ public class AdminController {
 
     //중고거래 관리
     @GetMapping("/market")
-    public String marketManagementPage(Model model) {
-        model.addAttribute("marketList", marketAdminService.getAllMarketItems());
+    public String marketManagementPage(
+            @RequestParam(required = false) String filterType,
+            @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) String status,
+            Model model) {
+        List<MarketAdminDto> marketList = marketAdminService.getMarketItems(filterType, keyword, status);
+        model.addAttribute("marketList", marketList);
         return "admin/market_management";
     }
 
@@ -99,26 +103,22 @@ public class AdminController {
 
     //신고 관리
     @GetMapping("/report")
-    public String reportManagementPage(Model model) {
-        model.addAttribute("reportList", reportAdminService.getAllReports());
+    public String reportManagementPage(
+            @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) String reportType,
+            @RequestParam(required = false) String reportStatus,
+            Model model) {
+        List<ReportAdminDto> reportList = reportAdminService.getReports(keyword, reportType, reportStatus);
+        model.addAttribute("reportList", reportList);
         return "admin/report_management";
     }
 
-//    @PostMapping("/report/{reportId}/suspend")
-//    public String processReport(@PathVariable Long reportid) {
-//        reportAdminService.updateReportStatus(reportId, "완료");
-//        return
-//    }
-//
-//    @PostMapping("/report/{reportId}/unsuspend")
-//    public String processReport(@PathVariable Long reportid) {
-//
-//    }
-//
-//    @PostMapping("/report/{reportId}/warn")
-//    public String processReport(@PathVariable Long reportid) {
-//
-//    }
+    @PostMapping("/report/{reportId}/status")
+    public String updateReportStatus(@PathVariable Long reportId,
+                                     @RequestParam("reportStatus") String reportStatus) {
+        reportAdminService.updateReportStatus(reportId, reportStatus);
+        return "redirect:/admin/report_management";
+    }
 
     //시스템 관리
     @GetMapping("/system")

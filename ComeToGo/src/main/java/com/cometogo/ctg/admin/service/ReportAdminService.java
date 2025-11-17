@@ -14,8 +14,8 @@ public class ReportAdminService {
     private final ReportAdminDao reportAdminDao;
     private final UserAdminDao userAdminDao;
 
-    public List<ReportAdminDto> getAllReports() {
-        return reportAdminDao.findAllReports();
+    public List<ReportAdminDto> getReports(String keyword, String reportType, String reportStatus) {
+        return reportAdminDao.findReports(keyword, reportType, reportStatus);
     }
 
     public void updateReportStatus(Long reportId, String status) {

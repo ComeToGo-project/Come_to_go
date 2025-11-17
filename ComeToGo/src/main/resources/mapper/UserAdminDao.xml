@@ -5,9 +5,17 @@
 
 <mapper namespace="com.cometogo.ctg.admin.dao.UserAdminDao">
 
-    <select id="users" resultType="com.cometogo.ctg.admin.dto.UserAdminDto">
-        SELECT user_id, nickname, email, join_date, user_role, user_status
-        FROM ctg_users
+    <select id="findUsers" resultType="com.cometogo.ctg.admin.dto.UserAdminDto">
+        SELECT u.user_id,
+               u.nickname,
+               u.email,
+               u.join_date,
+               u.user_role,
+               u.user_status,
+               b.ban_start,
+               b.ban_end
+        FROM ctg_users u
+        LEFT JOIN ctg_user_ban b ON u.user_id = b.user_id AND b.ban_status = 'BAN'
         <where>
             <if test="filterType != null and keyword != null and keyword != ''">
                 <choose>
@@ -24,12 +32,6 @@
             </if>
         </where>
         ORDER BY join_date DESC
-    </select>
-
-    <select id="findById" parameterType="long" resultType="com.cometogo.ctg.admin.dto.UserAdminDto">
-        SELECT user_id, nickname, email, join_date, user_role, user_status
-        FROM ctg_users
-        WHERE user_id = #{userId}
     </select>
 
     <update id="suspendUser" parameterType="long">

@@ -5,7 +5,7 @@
 
 <mapper namespace="com.cometogo.ctg.admin.dao.GroupAdminDao">
 
-    <select id="groups" resultType="com.cometogo.ctg.admin.dto.GroupAdminDto">
+    <select id="findGroups" resultType="com.cometogo.ctg.admin.dto.GroupAdminDto">
         SELECT g.group_id,
         g.group_name,
         g.owner_user_id,

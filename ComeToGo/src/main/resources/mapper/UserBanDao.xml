@@ -20,7 +20,7 @@
 
     <update id="updateBanStatusByUser" parameterType="map">
         UPDATE ctg_user_ban
-        SET ban_status = #{status}
+        SET ban_status = #{banStatus}
         WHERE user_id = #{userId}
           AND ban_status = 'BAN';
     </update>

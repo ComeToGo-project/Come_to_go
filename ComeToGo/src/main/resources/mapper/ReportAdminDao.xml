@@ -5,22 +5,32 @@
 
 <mapper namespace="com.cometogo.ctg.admin.dao.ReportAdminDao">
 
-    <select id="findAllReports" resultType="com.cometogo.ctg.admin.dto.ReportAdminDto">
+    <select id="findReports" resultType="com.cometogo.ctg.admin.dto.ReportAdminDto">
         SELECT r.report_id,
-               u.user_name,
-               r.report_type,
-               r.reason,
-               r.created_at,
-               r.status
+        u.user_name AS target_name,
+        r.report_type,
+        r.reason,
+        r.created_at,
+        r.report_status
         FROM ctg_report r
-                 LEFT JOIN ctg_users u ON r.target_id = u.user_id;
-
+        LEFT JOIN ctg_users u ON r.target_id = u.user_id
+        <where>
+            <if test="keyword != null and keyword != ''">
+                u.user_name LIKE CONCAT('%', #{keyword}, '%')
+            </if>
+            <if test="reportType != null and reportType != ''">
+                AND r.report_type = #{reportType}
+            </if>
+            <if test="reportStatus != null and reportStatus != ''">
+                AND r.report_status = #{reportStatus}
+            </if>
+        </where>
+        ORDER BY r.created_at DESC
     </select>
 
     <update id="updateReportStatus" parameterType="map">
         UPDATE ctg_report
         SET status = #{status}
         WHERE report_id = #{reportId};
-
     </update>
 </mapper>

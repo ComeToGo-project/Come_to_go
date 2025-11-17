@@ -28,19 +28,30 @@
     </div>
 
     <form class="flex items-center space-x-4 mb-3" th:action="@{/admin/management/report}" method="get">
-        <select name="filterType" class="rounded bg-violet-300 text-white font-bold px-3 py-2">
-            <option value="userName">사용자</option>
-            <option value="email">게시글</option>
-            <option value="email">채팅</option>
-        </select>
-        <input type="text" name="keyword" placeholder="검색창" class="rounded bg-violet-300 px-5 py-2 w-[320px] focus:outline-none">
+        <input type="text" name="keyword" placeholder="신고대상 검색창" class="rounded bg-violet-300 px-5 py-2 w-[320px] focus:outline-none">
         <button type="submit" class="bg-violet-400 text-white rounded px-4 py-2 font-bold">검색</button>
-        <select name="userStatus" class="rounded bg-white text-blue-600 font-bold px-2 py-2 ml-6">
-            <option value="">전체</option>
-            <option value="ACTIVE">미처리</option>
-            <option value="SUSPENDED">완료</option>
-        </select>
     </form>
+
+    <form th:action="@{/admin/management/report}" method="get" class="mb-4 flex items-center space-x-4">
+        <select name="reportType" class="rounded bg-violet-300 text-white px-3 py-2">
+            <option value="">전체</option>
+            <option value="USER">회원</option>
+            <option value="GROUP">동호회</option>
+            <option value="MARKET">중고거래</option>
+            <option value="CHAT">채팅</option>
+            <option value="BOARD">게시글</option>
+            <option value="COMMENT">댓글</option>
+            <option value="SUPPORT">문의</option>
+            <option value="OTHER">기타</option>
+        </select>
+        <select name="reportStatus" class="rounded bg-white text-blue-600 px-2 py-2">
+            <option value="">전체</option>
+            <option value="DONE">완료</option>
+            <option value="PENDING">미처리</option>
+        </select>
+        <button type="submit" class="bg-violet-400 text-white rounded px-4 py-2 font-bold">필터 검색</button>
+    </form>
+
 
     <div>
         <span class="bg-white font-bold px-4 py-2 rounded mb-2 inline-block shadow">신고 목록</span>
@@ -56,19 +67,20 @@
             </tr>
             </thead>
             <tbody>
-            <tr class="border-b" th:each="group : ${groupList}">
-                <td th:text="${group.groupName}" class="py-2"></td>
-                <td th:text="${group.ownerNickname}" class="py-2"></td>
-                <td th:text="${group.categoryName}" class="py-2"></td>
-                <td th:text="${group.city}" class="py-2"></td>
-                <td th:text="${group.createdAt}" class="py-2"></td>
-                <td th:text="${group.groupStatus}" class="py-2"></td>
+            <tr class="border-b" th:each="report : ${reportList}">
+                <td th:text="${report.targetName}" class="py-2"></td>
+                <td th:text="${report.reportType}" class="py-2"></td>
+                <td th:text="${report.reason}" class="py-2"></td>
+                <td th:text="${report.createdAt}" class="py-2"></td>
+                <td th:text="${report.reportStatus}" class="py-2"></td>
                 <td class="py-2 space-x-2">
-                    <form th:action="@{'/admin/management/group/' + ${group.groupId} + '/delete'}" method="post" class="inline-block">
-                        <button type="submit" class="text-red-600 font-bold">[삭제]</button>
+                    <form th:action="@{'/admin/management/report/' + ${report.reportId} + '/status'}" method="post" class="inline-block">
+                        <input type="hidden" name="status" value="DONE"/>
+                        <button type="submit" class="text-red-600 font-bold">[완료]</button>
                     </form>
-                    <form th:action="@{'/admin/management/group/' + ${group.groupId} + '/warn'}" method="post" class="inline-block">
-                        <button type="submit" class="text-green-600 font-bold">[경고]</button>
+                    <form th:action="@{'/admin/management/report/' + ${report.reportId} + '/status'}" method="post" class="inline-block">
+                        <input type="hidden" name="status" value="PENDING"/>
+                        <button type="submit" class="text-green-600 font-bold">[미처리]</button>
                     </form>
                 </td>
             </tr>

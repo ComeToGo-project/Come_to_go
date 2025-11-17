@@ -1,8 +1,12 @@
 package com.cometogo.ctg.admin.dto;
 
 import lombok.Getter;
+import lombok.Setter;
+
+import java.time.LocalDateTime;
 
 @Getter
+@Setter
 public class UserAdminDto {
 
     private Long userId;
@@ -11,4 +15,7 @@ public class UserAdminDto {
     private String joinDate;
     private String userRole;
     private String userStatus;
+    private LocalDateTime banStart;
+    private LocalDateTime banEnd;
+    private Long banDaysLeft;
 }

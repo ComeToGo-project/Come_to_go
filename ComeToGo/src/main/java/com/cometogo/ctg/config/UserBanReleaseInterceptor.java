@@ -10,25 +10,17 @@ import org.springframework.web.servlet.HandlerInterceptor;
 
 @Component
 @RequiredArgsConstructor
-public class UserInterceptor implements HandlerInterceptor {
-
+public class UserBanReleaseInterceptor implements HandlerInterceptor {
     private final UserAdminService userAdminService;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         HttpSession session = request.getSession(false);
-        Long userId = (session != null) ? (Long) session.getAttribute("userId") : null;
-        String userRole = (session != null) ? (String) session.getAttribute("userRole") : null;
+        Long userId = (session != null) ? (Long) session.getAttribute("user_id") : null;
 
         //로그인시 정지 상태 자동 해제 시도
         if (userId != null) {
             userAdminService.checkAndReleaseUserBan(userId);
-        }
-
-        //관리자 페이지 권한 체크
-        if (!"ADMIN".equals(userRole)) {
-            response.sendRedirect("/");
-            return false;
         }
         return true;
     }
