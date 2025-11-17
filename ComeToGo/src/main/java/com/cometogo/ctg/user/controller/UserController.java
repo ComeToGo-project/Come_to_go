@@ -120,7 +120,7 @@ public class UserController {
         UserDto user = userService.login(id, pw);
         if (user != null) {
             session.setAttribute("user_id", user.getUserId());
-            session.setAttribute("userRole", user.getUserRole());
+            session.setAttribute("user_role", user.getUserRole());
             return "redirect:/"; // 로그인 성공 후 이동 페이지
         }
 
