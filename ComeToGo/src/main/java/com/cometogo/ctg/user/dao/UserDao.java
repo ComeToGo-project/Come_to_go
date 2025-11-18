@@ -56,7 +56,5 @@ public interface UserDao {
     @Update("UPDATE ctg_users SET nickname = #{newNickname} WHERE user_id = #{userId}")
     void updateNickname(Long userId, String newNickname);
 
-    @Select("SELECT role FROM ctg_users WHERE user_id = #{userId}")
-    String getUserById(Long userId);
 }
 
