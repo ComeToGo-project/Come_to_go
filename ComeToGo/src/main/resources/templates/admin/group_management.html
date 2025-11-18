@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>관리자 페이지</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-white min-h-screen flex flex-col">
+
+<script>
+    let pendingForm = null;
+    let pendingAction = "";
+
+    document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll('.confirm-form button').forEach(btn => {
+            btn.addEventListener('click', function (e) {
+                e.preventDefault();
+                pendingForm = btn.closest("form");
+                pendingAction = btn.getAttribute("data-action");
+                document.getElementById('modalMessage').textContent =
+                    `정말 ${pendingAction} 하시겠습니까?`;
+                document.getElementById('confirmModal').classList.remove("hidden");
+            });
+        });
+
+        document.getElementById('modalYes').addEventListener('click', function () {
+            if (pendingForm) {
+                pendingForm.submit();
+            }
+            document.getElementById('confirmModal').classList.add("hidden");
+            pendingForm = null;
+        });
+
+        document.getElementById('modalNo').addEventListener('click', function () {
+            document.getElementById('confirmModal').classList.add("hidden");
+            pendingForm = null;
+        });
+    });
+</script>
+
+<div class="w-full relative flex items-center pt-10 h-20">
+    <div class="absolute left-10 top-1/2 -translate-y-1/2">
+        <a href="/">
+            <img src="/img/자산%204.png" alt="로고" class="h-10"/>
+        </a>
+    </div>
+    <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+        <a href="/admin/management">
+      <span class="w-1/2 font-bold text-2xl border-8 border-blue-700 px-6 py-3 bg-white text-gray-900 text-center">
+        관리자 페이지
+      </span>
+        </a>
+    </div>
+</div>
+
+<div class="bg-blue-600 p-8 rounded w-[900px] mx-auto mt-8">
+
+    <div class="flex items-center mb-5">
+        <span class="bg-white font-bold text-xl rounded px-5 py-2 mr-6 shadow">동호회 관리</span>
+    </div>
+
+    <form class="flex items-center space-x-4 mb-3" th:action="@{/admin/management/group}" method="get">
+        <select name="filterType" class="rounded bg-violet-300 text-white font-bold px-3 py-2">
+            <option value="groupName">동호회명</option>
+            <option value="categoryName">카테고리</option>
+        </select>
+        <input type="text" name="keyword" placeholder="검색창" class="rounded bg-violet-300 px-5 py-2 w-[320px] focus:outline-none">
+        <button type="submit" class="bg-violet-400 text-white rounded px-4 py-2 font-bold">검색</button>
+    </form>
+
+    <div>
+        <span class="bg-white font-bold px-4 py-2 rounded mb-2 inline-block shadow">동호회 목록</span>
+        <table class="mt-2 min-w-full bg-white rounded text-center">
+            <thead>
+            <tr class="border-b">
+                <th class="py-2">동호회명</th>
+                <th class="py-2">동호회장</th>
+                <th class="py-2">카테고리</th>
+                <th class="py-2">지역</th>
+                <th class="py-2">생성일</th>
+                <th class="py-2">경고 누적</th>
+                <th class="py-2">관리</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr class="border-b" th:each="group : ${groupList}">
+                <td th:text="${group.groupName}" class="py-2"></td>
+                <td th:text="${group.ownerNickname}" class="py-2"></td>
+                <td th:text="${group.categoryName}" class="py-2"></td>
+                <td th:text="${group.city}" class="py-2"></td>
+                <td th:text="${group.createdAt}" class="py-2"></td>
+                <td th:text="${group.groupStatus == null || group.groupStatus == 0 ? '0회' : group.groupStatus + '회'}" class="py-2"></td>
+                <td class="py-2 space-x-2">
+                    <form th:action="@{'/admin/management/group/' + ${group.groupId} + '/warn'}"
+                          method="post" class="inline-block confirm-form">
+                        <button type="button" class="text-green-600 font-bold" data-action="경고">[경고]</button>
+                    </form>
+                    <form th:action="@{'/admin/management/group/' + ${group.groupId} + '/delete'}"
+                          method="post" class="inline-block confirm-form">
+                        <button type="button" class="text-red-600 font-bold" data-action="삭제">[삭제]</button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div id="confirmModal" class="fixed inset-0 flex items-center justify-center z-50 hidden bg-black bg-opacity-50">
+    <div class="bg-white p-8 rounded shadow-md text-center w-80">
+        <div class="mb-6 text-lg font-semibold" id="modalMessage">
+            정말 실행하시겠습니까?
+        </div>
+        <div class="flex justify-center gap-8">
+            <button id="modalYes" class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700">예</button>
+            <button id="modalNo" class="bg-gray-300 px-6 py-2 rounded hover:bg-gray-400">아니오</button>
+        </div>
+    </div>
+</div>
+</body>
+</html>

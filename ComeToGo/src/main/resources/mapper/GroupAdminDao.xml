@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.cometogo.ctg.admin.dao.GroupAdminDao">
+
+    <select id="findGroups" resultType="com.cometogo.ctg.admin.dto.GroupAdminDto">
+        SELECT g.group_id,
+        g.group_name,
+        g.owner_user_id,
+        u.nickname AS ownerNickname,
+        g.category_id,
+        c.category_name,
+        l.city,
+        g.created_at,
+        g.group_status
+        FROM ctg_group g
+        JOIN ctg_users u ON g.owner_user_id = u.user_id
+        JOIN ctg_categories c ON g.category_id = c.category_id
+        LEFT JOIN ctg_group_location l ON g.group_id = l.group_id
+        <where>
+            <if test="filterType != null and filterType == 'groupName' and keyword != null and keyword != ''">
+                g.group_name LIKE CONCAT('%', #{keyword}, '%')
+            </if>
+            <if test="filterType != null and filterType == 'categoryName' and keyword != null and keyword != ''">
+                c.category_name LIKE CONCAT('%', #{keyword}, '%')
+            </if>
+        </where>
+    </select>
+
+    <delete id="deleteGroupLocations" parameterType="long">
+        DELETE
+        FROM ctg_group_location
+        WHERE group_id = #{groupId};
+    </delete>
+
+    <delete id="deleteGroupUsers" parameterType="long">
+        DELETE
+        FROM group_users
+        WHERE group_id = #{groupId};
+    </delete>
+
+    <delete id="deleteGroupBoards" parameterType="long">
+        DELETE
+        FROM group_board
+        WHERE group_id = #{groupId};
+    </delete>
+
+    <delete id="deleteGroupJoins" parameterType="long">
+        DELETE
+        FROM ctg_group_join
+        WHERE group_id = #{groupId};
+    </delete>
+
+    <delete id="deleteGroupChats" parameterType="long">
+        DELETE
+        FROM group_chat
+        WHERE group_id = #{groupId};
+    </delete>
+
+    <delete id="deleteGroupMarkets" parameterType="long">
+        DELETE
+        FROM market
+        WHERE group_id = #{groupId};
+    </delete>
+
+    <delete id="deleteGroupSchedules" parameterType="long">
+        DELETE
+        FROM schedule
+        WHERE group_id = #{groupId};
+    </delete>
+
+    <delete id="deleteGroup" parameterType="long">
+        DELETE
+        FROM ctg_group
+        WHERE group_id = #{groupId};
+    </delete>
+
+    <update id="addGroupWarning" parameterType="long">
+        UPDATE ctg_group
+        SET group_status = group_status + 1
+        WHERE group_id = #{groupId};
+    </update>
+</mapper>

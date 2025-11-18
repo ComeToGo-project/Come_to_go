@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>관리자 페이지</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-white min-h-screen flex flex-col">
+<div class="w-full relative flex items-center pt-10 h-20">
+    <div class="absolute left-10 top-1/2 -translate-y-1/2">
+        <a href="/">
+            <img src="/img/자산%204.png" alt="로고" class="h-10"/>
+        </a>
+    </div>
+    <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+        <a href="/admin/management">
+      <span class="w-1/2 font-bold text-2xl border-8 border-blue-700 px-6 py-3 bg-white text-gray-900 text-center">
+        관리자 페이지
+      </span>
+        </a>
+    </div>
+</div>
+
+<div class="bg-blue-600 p-8 rounded w-[900px] mx-auto mt-8">
+
+    <div class="flex items-center mb-5">
+        <span class="bg-white font-bold text-xl rounded px-5 py-2 mr-6 shadow">신고 관리</span>
+    </div>
+
+    <form class="flex items-center space-x-4 mb-3" th:action="@{/admin/management/report}" method="get">
+        <input type="text" name="keyword" placeholder="신고대상 검색창" class="rounded bg-violet-300 px-5 py-2 w-[320px] focus:outline-none">
+        <button type="submit" class="bg-violet-400 text-white rounded px-4 py-2 font-bold">검색</button>
+    </form>
+
+    <form th:action="@{/admin/management/report}" method="get" class="mb-4 flex items-center space-x-4">
+        <select name="reportType" class="rounded bg-violet-300 text-white px-3 py-2">
+            <option value="">전체</option>
+            <option value="USER">회원</option>
+            <option value="GROUP">동호회</option>
+            <option value="MARKET">중고거래</option>
+            <option value="CHAT">채팅</option>
+            <option value="BOARD">게시글</option>
+            <option value="COMMENT">댓글</option>
+            <option value="SUPPORT">문의</option>
+            <option value="OTHER">기타</option>
+        </select>
+        <select name="reportStatus" class="rounded bg-white text-blue-600 px-2 py-2">
+            <option value="">전체</option>
+            <option value="DONE">완료</option>
+            <option value="PENDING">미처리</option>
+        </select>
+        <button type="submit" class="bg-violet-400 text-white rounded px-4 py-2 font-bold">필터 검색</button>
+    </form>
+
+
+    <div>
+        <span class="bg-white font-bold px-4 py-2 rounded mb-2 inline-block shadow">신고 목록</span>
+        <table class="mt-2 min-w-full bg-white rounded text-center">
+            <thead>
+            <tr class="border-b">
+                <th class="py-2">신고대상</th>
+                <th class="py-2">유형</th>
+                <th class="py-2">신고사유</th>
+                <th class="py-2">신고일자</th>
+                <th class="py-2">상태</th>
+                <th class="py-2">관리</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr class="border-b" th:each="report : ${reportList}">
+                <td th:text="${report.targetName}" class="py-2"></td>
+                <td th:text="${report.reportType}" class="py-2"></td>
+                <td th:text="${report.reason}" class="py-2"></td>
+                <td th:text="${report.createdAt}" class="py-2"></td>
+                <td th:text="${report.reportStatus}" class="py-2"></td>
+                <td class="py-2 space-x-2">
+                    <form th:action="@{'/admin/management/report/' + ${report.reportId} + '/status'}" method="post" class="inline-block">
+                        <input type="hidden" name="status" value="DONE"/>
+                        <button type="submit" class="text-red-600 font-bold">[완료]</button>
+                    </form>
+                    <form th:action="@{'/admin/management/report/' + ${report.reportId} + '/status'}" method="post" class="inline-block">
+                        <input type="hidden" name="status" value="PENDING"/>
+                        <button type="submit" class="text-green-600 font-bold">[미처리]</button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+</body>
+</html>

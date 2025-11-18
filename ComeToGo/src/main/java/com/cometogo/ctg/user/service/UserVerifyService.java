@@ -87,13 +87,13 @@ public class UserVerifyService {
         try {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
-
             helper.setTo(to);
             helper.setSubject("[CTG] 이메일 인증 코드");
             helper.setText("인증 코드: " + code + "\n\n5분 이내에 입력해주세요.");
 
             mailSender.send(message);
         } catch (Exception e) {
+            System.out.println(e.getMessage());
             throw new RuntimeException("이메일 발송 실패", e);
         }
     }

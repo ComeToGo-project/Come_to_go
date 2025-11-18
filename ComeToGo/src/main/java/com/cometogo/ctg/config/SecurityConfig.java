@@ -9,8 +9,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
-import static org.springframework.security.config.Customizer.withDefaults;
-
 @Configuration              // 이 클래스가 스프링 설정 클래스(Bean 등록용) 임을 명시
 @EnableWebSecurity          // Spring Security를 활성화하고 보안 설정을 이 클래스에서 관리하도록 지정
 public class SecurityConfig {

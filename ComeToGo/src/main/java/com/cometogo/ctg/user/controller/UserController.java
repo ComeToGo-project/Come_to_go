@@ -122,9 +122,7 @@ public class UserController {
         UserDto user = userService.login(id, pw);
         if (user != null) {
             session.setAttribute("user_id", user.getUserId());
-            System.out.println("로그인 성공");
-            System.out.println(session.getAttribute("user_id"));
-            System.out.println(user.getUserId());
+            session.setAttribute("user_role", user.getUserRole());
             return "redirect:/"; // 로그인 성공 후 이동 페이지
         }
 

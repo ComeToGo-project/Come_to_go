@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.cometogo.ctg.admin.dao.UserAdminDao">
+
+    <select id="findUsers" resultType="com.cometogo.ctg.admin.dto.UserAdminDto">
+        SELECT u.user_id,
+               u.nickname,
+               u.email,
+               u.join_date,
+               u.user_role,
+               u.user_status,
+               b.ban_start,
+               b.ban_end
+        FROM ctg_users u
+        LEFT JOIN ctg_user_ban b ON u.user_id = b.user_id AND b.ban_status = 'BAN'
+        <where>
+            <if test="filterType != null and keyword != null and keyword != ''">
+                <choose>
+                    <when test="filterType == 'nickname'">
+                        nickname LIKE CONCAT('%', #{keyword}, '%')
+                    </when>
+                    <when test="filterType == 'email'">
+                        email LIKE CONCAT('%', #{keyword}, '%')
+                    </when>
+                </choose>
+            </if>
+            <if test="userStatus != null and userStatus != ''">
+                AND user_status = #{userStatus}
+            </if>
+        </where>
+        ORDER BY join_date DESC
+    </select>
+
+    <update id="suspendUser" parameterType="long">
+        UPDATE ctg_users
+        SET user_status = 'SUSPENDED'
+        WHERE user_id = #{userId};
+    </update>
+
+    <update id="unsuspendUser" parameterType="long">
+        UPDATE ctg_users
+        SET user_status = 'ACTIVE'
+        WHERE user_id = #{userId}
+    </update>
+</mapper>

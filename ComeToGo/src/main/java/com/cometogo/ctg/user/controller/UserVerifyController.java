@@ -34,6 +34,7 @@ public class UserVerifyController {
             return Map.of("success", true, "message", "인증 코드가 발송되었습니다.");
         } catch (Exception e) {
             System.out.println("발송 실패");
+            System.out.println(e.getMessage());
             return Map.of("success", false, "message", "발송 실패");
         }
     }

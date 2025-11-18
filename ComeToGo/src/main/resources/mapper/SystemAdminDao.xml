@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.cometogo.ctg.admin.dao.SystemAdminDao">
+    <select id="findAllCategories" resultType="com.cometogo.ctg.admin.dto.SystemAdminDto">
+        SELECT category_id, category_name FROM ctg_categories
+    </select>
+    <insert id="addCategory" parameterType="string">
+        INSERT INTO ctg_categories (category_name) VALUES (#{categoryName})
+    </insert>
+    <delete id="deleteCategory" parameterType="long">
+        DELETE FROM ctg_categories WHERE category_id = #{categoryId}
+    </delete>
+</mapper>
