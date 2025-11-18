@@ -142,4 +142,8 @@ public class UserService {
     public boolean updateAddress(@Valid UserAddressDto addressDto) {
         return userAddressDao.updateAddress(addressDto);
     }
+
+    public String getUserById(Long userId){
+        return userDao.getUserById(userId);
+    }
 }
