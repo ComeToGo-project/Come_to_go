@@ -17,6 +17,6 @@ public class HomeController {
 
     @GetMapping("/")
     public String mainPage(HttpSession session, Model model) {
-        return "index";  // 메인 페이지 뷰
+        return "user/index";  // 메인 페이지 뷰
     }
 }

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>주소 변경</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center">
+
+<div class="bg-white rounded-lg shadow-md p-8 w-full max-w-md">
+    <h1 class="text-2xl font-bold text-center mb-6">주소 변경</h1>
+
+    <form th:action="@{/user/mypage/change-address}" method="post" class="space-y-4" th:object="${userAddressDto}">
+        <div>
+            <label for="city" class="block font-semibold mb-1">시/도</label>
+            <div class="flex gap-2">
+                <input type="text" id="city" th:field="*{city}" placeholder="시/도" readonly
+                       class="flex-1 border border-gray-300 rounded px-3 py-2 bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"/>
+                <button type="button" onclick="execDaumPostcode()"
+                        class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition whitespace-nowrap">
+                    주소 검색
+                </button>
+            </div>
+        </div>
+
+        <div>
+            <label for="district" class="block font-semibold mb-1">구/군</label>
+            <input type="text" id="district" th:field="*{district}" placeholder="구/군" readonly
+                   class="w-full border border-gray-300 rounded px-3 py-2 bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"/>
+        </div>
+
+        <div>
+            <label for="neighborhood" class="block font-semibold mb-1">동/읍/면</label>
+            <input type="text" id="neighborhood" th:field="*{neighborhood}" placeholder="동/읍/면" readonly
+                   class="w-full border border-gray-300 rounded px-3 py-2 bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"/>
+        </div>
+
+        <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded font-semibold hover:bg-blue-700 transition">
+            주소 변경
+        </button>
+
+        <p th:if="${error != null}" th:text="${error}" class="text-red-500 text-sm mt-2"></p>
+        <p th:if="${success != null}" th:text="${success}" class="text-green-600 text-sm mt-2"></p>
+    </form>
+</div>
+
+<script>
+    function execDaumPostcode() {
+        new daum.Postcode({
+            oncomplete: function(data) {
+                document.getElementById("city").value = data.sido;          // 시/도
+                document.getElementById("district").value = data.sigungu;   // 구/군
+                document.getElementById("neighborhood").value = data.bname ? data.bname : ""; // 동/읍/면
+            }
+        }).open();
+    }
+</script>
+
+</body>
+</html>

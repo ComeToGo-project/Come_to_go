@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>닉네임 변경</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center">
+<div class="bg-white rounded-lg shadow-md p-8 w-full max-w-md">
+    <h1 class="text-2xl font-bold text-center mb-6">닉네임 변경</h1>
+
+    <form th:action="@{/user/mypage/change-nickname}" method="post" class="space-y-4">
+        <label for="nickname" class="block font-semibold mb-1">새 닉네임</label>
+        <input type="text" id="nickname" name="nickname" placeholder="새 닉네임 입력"
+               class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" required />
+
+        <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded font-semibold hover:bg-blue-700 transition">
+            닉네임 변경
+        </button>
+    </form>
+
+    <p th:if="${error != null}" th:text="${error}" class="text-red-500 text-sm mt-2"></p>
+    <p th:if="${success != null}" th:text="${success}" class="text-green-600 text-sm mt-2"></p>
+</div>
+</body>
+</html>

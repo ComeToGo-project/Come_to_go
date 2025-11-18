@@ -10,4 +10,7 @@
     VALUES (#{userId}, #{city}, #{district}, #{neighborhood})
 </insert>
 
+    <update id="updateAddress" parameterType="com.cometogo.ctg.user.dto.UserAddressDto">
+        UPDATE ctg_address SET city = #{city}, district = #{district}, neighborhood = #{neighborhood} WHERE user_id = #{userId}
+    </update>
 </mapper>

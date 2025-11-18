@@ -96,4 +96,50 @@ public class UserService {
             return false;
         }
     }
+
+    //이름 가져오기
+    public String findByName(Long userId) {
+        return userDao.findByName(userId);
+    }
+
+    //닉네임 가져오기
+    public String findByNickName(Long userId) {
+        return userDao.findByNickName(userId);
+    }
+
+    //아이디 가져오기
+    public String findById(Long userId) {
+        return userDao.findById(userId);
+    }
+
+    //마이페이지 비밀번호 변경
+    public boolean changePassword(Long userId,String currentPw, String newPw) {
+        try {
+            String encodedOldPw = userDao.findPasswordByUserId(userId);
+
+            // 현재 비밀번호 확인
+            if (!passwordEncoder.matches(currentPw, encodedOldPw)) {
+                return false;  // 현재 비밀번호 틀림
+            }
+
+            String encodedPassword = passwordEncoder.encode(newPw);
+            userDao.changePassword(userId, encodedPassword);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public boolean updateNickname(Long userId, String newNickname) {
+        try {
+            userDao.updateNickname(userId, newNickname);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public boolean updateAddress(@Valid UserAddressDto addressDto) {
+        return userAddressDao.updateAddress(addressDto);
+    }
 }

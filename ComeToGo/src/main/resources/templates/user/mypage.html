@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>마이페이지</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+
+</head>
+<body class="bg-gray-100 min-h-screen">
+
+<div th:replace="fragments :: header"></div>
+
+<main class="flex flex-col items-center justify-center flex-1 px-2">
+    <div class="w-full max-w-md bg-white rounded-xl shadow-md p-8 space-y-10 mt-12">
+        <h1 class="text-2xl font-bold text-center mb-8">마이페이지</h1>
+
+        <!-- 내 정보 -->
+        <div>
+            <div class="text-base font-bold text-gray-700 mb-3">내 정보</div>
+            <div class="flex justify-between gap-2 mb-3">
+                <div class="bg-gray-100 rounded w-28 h-12 text-base font-normal flex items-center justify-center">프로필</div>
+                <div class="bg-gray-100 rounded w-40 h-12 text-base font-normal flex items-center justify-center text-center whitespace-nowrap"
+                     th:text="${userName} + ' / ' + ${nickname}">
+                    이름 / 닉네임
+                </div>
+            </div>
+        </div>
+
+
+        <!-- 계정 -->
+        <div>
+            <div class="text-base font-bold text-gray-700 mb-3">계정</div>
+            <div class="flex justify-between gap-2 mb-2">
+                <div class="bg-gray-100 rounded w-28 h-12 text-base font-normal flex items-center justify-center" >아이디</div>
+                <div class="bg-gray-100 rounded w-28 h-12 text-base font-normal flex items-center justify-center" th:text="${id}">아이디 명</div>
+            </div>
+            <div class="flex flex-col gap-2 mb-2">
+                <button class="bg-blue-600 text-white w-28 h-11 rounded text-base font-semibold hover:bg-blue-700 transition" onclick="location.href='/user/mypage/change-password'">비밀번호 변경</button>
+                <button class="bg-blue-600 text-white w-28 h-11 rounded text-base font-semibold hover:bg-blue-700 transition" onclick="location.href='/user/mypage/change-nickname'">닉네임 변경</button>
+                <button class="bg-blue-600 text-white w-28 h-11 rounded text-base font-semibold hover:bg-blue-700 transition" onclick="location.href='/user/mypage/change-address'">주소 변경</button>
+            </div>
+        </div>
+
+        <!-- 기타 -->
+        <div>
+            <div class="text-base font-bold text-gray-700 mb-3">기타</div>
+            <button class="bg-blue-600 text-white w-full h-11 rounded text-base font-semibold hover:bg-blue-700 transition">회원탈퇴</button>
+        </div>
+    </div>
+</main>
+
+<div th:replace="fragments :: footer"></div>
+<script th:inline="javascript" th:if="${success != null}">
+    /*<![CDATA[*/
+    alert([[${success}]]);
+    /*]]>*/
+</script>
+</body>
+</html>
