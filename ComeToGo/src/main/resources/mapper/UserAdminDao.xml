@@ -45,4 +45,10 @@
         SET user_status = 'ACTIVE'
         WHERE user_id = #{userId}
     </update>
+
+    <select id="findUserIdByNickname" resultType="java.lang.Long" parameterType="java.lang.String">
+        SELECT user_id
+        FROM ctg_users
+        WHERE nickname = #{nickname};
+    </select>
 </mapper>

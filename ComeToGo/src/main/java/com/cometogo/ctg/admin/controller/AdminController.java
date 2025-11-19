@@ -1,16 +1,10 @@
 package com.cometogo.ctg.admin.controller;
 
-import com.cometogo.ctg.admin.dao.*;
-import com.cometogo.ctg.admin.dto.*;
 import com.cometogo.ctg.admin.service.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
-import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
-import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
@@ -18,19 +12,15 @@ import java.util.List;
 public class AdminController {
 
     private final UserAdminService userAdminService;
-    private final AdminDashboardDao adminDashboardDao;
-    private final UserAdminDao userAdminDao;
     private final GroupAdminService groupAdminService;
     private final SystemAdminService systemAdminService;
     private final MarketAdminService marketAdminService;
     private final ReportAdminService reportAdminService;
-    private final GroupAdminDao groupAdminDao;
-    private final MarketAdminDao marketAdminDao;
-    private final ReportAdminDao reportAdminDao;
+    private final AdminDashboardService adminDashboardService;
 
     @GetMapping
     public String adminPage(Model model) {
-        dashBoard(model);
+        model.addAttribute("stats", adminDashboardService.dashBoard());
         return "admin/manager";
     }
 
@@ -42,8 +32,7 @@ public class AdminController {
             @RequestParam(required = false) String userStatus,
             Model model
     ) {
-        List<UserAdminDto> userList = userAdminService.getUsers(filterType, keyword, userStatus);
-        model.addAttribute("userList", userList);
+        model.addAttribute("userList", userAdminService.getUsers(filterType, keyword, userStatus));
         return "admin/user_management";
     }
 
@@ -66,8 +55,7 @@ public class AdminController {
             @RequestParam(required = false) String filterType,
             @RequestParam(required = false) String keyword,
             Model model) {
-        List<GroupAdminDto> groupList = groupAdminService.getGroups(filterType, keyword);
-        model.addAttribute("groupList", groupList);
+        model.addAttribute("groupList", groupAdminService.getGroups(filterType, keyword));
         return "admin/group_management";
     }
 
@@ -90,8 +78,7 @@ public class AdminController {
             @RequestParam(required = false) String keyword,
             @RequestParam(required = false) String status,
             Model model) {
-        List<MarketAdminDto> marketList = marketAdminService.getMarketItems(filterType, keyword, status);
-        model.addAttribute("marketList", marketList);
+        model.addAttribute("marketList", marketAdminService.getMarketItems(filterType, keyword, status));
         return "admin/market_management";
     }
 
@@ -108,8 +95,7 @@ public class AdminController {
             @RequestParam(required = false) String reportType,
             @RequestParam(required = false) String reportStatus,
             Model model) {
-        List<ReportAdminDto> reportList = reportAdminService.getReports(keyword, reportType, reportStatus);
-        model.addAttribute("reportList", reportList);
+        model.addAttribute("reportList", reportAdminService.getReports(keyword, reportType, reportStatus));
         return "admin/report_management";
     }
 
@@ -139,9 +125,4 @@ public class AdminController {
         return "redirect:/admin/management/system";
     }
 
-    private void dashBoard(Model model) {
-        String today = LocalDate.now().toString();
-        AdminDashboardStatsDto stats = adminDashboardDao.getDashboardStats(today);
-        model.addAttribute("stats", stats);
-    }
 }

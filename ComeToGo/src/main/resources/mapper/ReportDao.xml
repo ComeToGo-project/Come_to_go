@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.cometogo.ctg.support.dao.ReportDao">
+    <insert id="insertReport" parameterType="com.cometogo.ctg.support.dto.ReportDto" useGeneratedKeys="true"
+            keyProperty="reportId">
+        INSERT INTO ctg_report (reporter_id, target_id, report_type, reason, contents, report_status, created_at)
+        VALUES (#{reporterId}, #{targetId}, #{reportType}, #{reason}, #{contents}, #{reportStatus}, #{createdAt});
+    </insert>
+
+    <insert id="insertReportImage" parameterType="com.cometogo.ctg.support.dto.ReportImageDto" useGeneratedKeys="true" keyProperty="imageId">
+        INSERT INTO ctg_report_image(report_id, file_path, original_name, uploaded_at)
+        VALUES (#{reportId}, #{filePath}, #{originalName}, #{uploadedAt});
+    </insert>
+</mapper>

@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head>
+    <meta charset="UTF-8"/>
+    <title>고객지원 접수 페이지</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 min-h-screen flex flex-col">
+
+<div th:replace="fragments :: header"></div>
+
+<main class="flex justify-center items-start py-12 bg-blue-100 min-h-[calc(100vh-80px)]">
+    <div class="w-full max-w-2xl bg-white rounded-xl p-6 shadow-lg border-2 border-blue-300">
+        <div class="flex items-start gap-5">
+            <!-- 왼쪽: 문의/신고 버튼 -->
+            <div>
+                <button type="button"
+                        class="bg-white border border-gray-300 px-4 py-2 rounded-md shadow font-semibold mb-2 hover:bg-blue-50">
+                    문의 / 신고 하기
+                </button>
+            </div>
+            <form class="flex-1 space-y-4 w-full" th:action="@{/user/support/report}" method="post"
+                  enctype="multipart/form-data" onsubmit="return validateForm();">
+                <!-- 문의/신고 유형 -->
+                <label class="block font-semibold text-sm" for="reportType">문의 / 신고 유형</label>
+                <select id="reportType" name="reportType" required
+                        class="w-full border rounded px-3 py-2 bg-gray-100 font-semibold text-gray-600 text-sm mb-1"
+                        onchange="handleTypeChange(this.value)">
+                    <option value="">아래 항목을 선택해주세요.</option>
+                    <option value="USER">회원</option>
+                    <option value="GROUP">동호회</option>
+                    <option value="MARKET">중고거래</option>
+                    <option value="CHAT">채팅</option>
+                    <option value="BOARD">게시글</option>
+                    <option value="COMMENT">댓글</option>
+                    <option value="SUPPORT">문의</option>
+                    <option value="OTHER">기타</option>
+                </select>
+                <div id="reportTypeError" class="text-red-600 text-xs hidden">문의/신고 유형을 선택해 주세요.</div>
+
+                <!-- 타겟 닉네임/ID 입력 (문의, 기타 제외시만 보임) -->
+                <div id="targetIdBlock" style="display:none;">
+                    <label class="block font-semibold text-sm" for="targetNickname">대상 닉네임</label>
+                    <input type="text" id="targetNickname" name="targetNickname"
+                           class="w-full border-2 rounded px-3 py-2 outline-none focus:ring-2 focus:ring-blue-400"
+                           placeholder="대상 닉네임을 입력해주세요."/>
+                    <div id="targetNicknameError" class="text-red-600 text-xs hidden">닉네임을 입력하세요.</div>
+                    <div id="targetNicknameDbError" class="text-red-600 text-xs hidden">존재하지 않는 유저입니다.</div>
+                </div>
+
+                <!-- 신고 사유 (필수) -->
+                <label class="block font-semibold text-sm" for="reason">신고 사유</label>
+                <input type="text" id="reason" name="reason" required
+                       class="w-full border-2 rounded px-3 py-2 outline-none focus:ring-2 focus:ring-blue-400"
+                       placeholder="신고/문의 사유를 입력해주세요."/>
+                <div id="reasonError" class="text-red-600 text-xs hidden">신고 사유를 입력하세요.</div>
+
+                <!-- 문의/신고 내용 -->
+                <label class="block font-semibold text-sm" for="contents">문의 / 신고 내용</label>
+                <textarea id="contents" name="contents" rows="3" required
+                          class="w-full border-2 rounded px-3 py-2 outline-none focus:ring-2 focus:ring-blue-400 resize-none"></textarea>
+                <div id="contentsError" class="text-red-600 text-xs hidden">문의/신고 내용을 작성해 주세요.</div>
+
+                <!-- 첨부파일 -->
+                <div>
+                    <span class="block font-semibold text-sm mb-1">첨부파일(필수)</span>
+                    <label class="inline-block bg-red-600 text-white px-4 py-2 rounded cursor-pointer font-semibold hover:bg-red-700">
+                        파일 선택
+                        <input type="file" id="image" name="image" class="hidden">
+                    </label>
+                    <div id="attachmentError" class="text-red-600 text-xs hidden">첨부파일을 등록해 주세요.</div>
+                </div>
+
+                <!-- 연락받을 이메일 -->
+                <div>
+                    <span class="block font-semibold text-sm mb-1">연락받을 이메일</span>
+                    <input type="email" id="email" name="email"
+                           class="w-full bg-gray-200 rounded px-3 py-2 text-gray-500 font-semibold text-sm mb-1"
+                           placeholder="(가입시 적은 이메일 고정)" readonly required>
+                    <div id="emailError" class="text-red-600 text-xs hidden">이메일을 입력해 주세요.</div>
+                </div>
+
+                <!-- 개인정보 수집 동의 -->
+                <div class="flex items-center mt-2">
+                    <input type="checkbox" id="privacy" required class="accent-blue-500 w-5 h-5 mr-2"/>
+                    <span class="font-semibold text-green-800 text-sm">개인정보 수집 및 이용 <span class="font-normal text-xs">(필수)</span></span>
+                </div>
+                <div id="privacyError" class="text-red-600 text-xs hidden">개인정보 수집 및 이용 동의를 체크하세요.</div>
+
+                <!-- 제출 버튼 -->
+                <button type="submit"
+                        class="w-full py-3 rounded bg-red-600 text-white text-lg font-bold mt-4 hover:bg-red-700 transition">
+                    문의 / 신고 접수하기
+                </button>
+            </form>
+
+            <script>
+                function handleTypeChange(val) {
+                    const block = document.getElementById('targetIdBlock');
+                    if (["USER", "GROUP", "MARKET", "CHAT", "BOARD", "COMMENT"].includes(val)) {
+                        block.style.display = "block";
+                    } else {
+                        block.style.display = "none";
+                    }
+                    document.getElementById('reportTypeError').classList.add('hidden');
+                }
+
+                window.onload = function () {
+                    handleTypeChange(document.getElementById('reportType').value);
+                };
+
+                async function validateNickname(nickname) {
+                    const res = await fetch(`/user/support/exist?nickname=${encodeURIComponent(nickname)}`);
+                    return await res.json();
+                }
+
+                async function validateForm() {
+                    let valid = true;
+
+                    const reportType = document.getElementById('reportType').value;
+                    if (!reportType) {
+                        document.getElementById('reportTypeError').classList.remove('hidden');
+                        valid = false;
+                    } else {
+                        document.getElementById('reportTypeError').classList.add('hidden');
+                    }
+
+                    if (["USER", "GROUP", "MARKET", "CHAT", "BOARD", "COMMENT"].includes(reportType)) {
+                        const nickname = document.getElementById('targetNickname').value.trim();
+                        if (!nickname) {
+                            document.getElementById('targetNicknameError').classList.remove('hidden');
+                            valid = false;
+                        } else {
+                            document.getElementById('targetNicknameError').classList.add('hidden');
+                            const exists = await validateNickname(nickname);
+                            if (!exists) {
+                                document.getElementById('targetNicknameDbError').classList.remove('hidden');
+                                valid = false;
+                            } else {
+                                document.getElementById('targetNicknameDbError').classList.add('hidden');
+                            }
+                        }
+                    }
+
+                    // 신고 사유 필수
+                    const reason = document.getElementById('reason').value.trim();
+                    if (!reason) {
+                        document.getElementById('reasonError').classList.remove('hidden');
+                        valid = false;
+                    } else {
+                        document.getElementById('reasonError').classList.add('hidden');
+                    }
+
+                    // 문의/신고 내용 필수
+                    const contents = document.getElementById('contents').value.trim();
+                    if (!contents) {
+                        document.getElementById('contentsError').classList.remove('hidden');
+                        valid = false;
+                    } else {
+                        document.getElementById('contentsError').classList.add('hidden');
+                    }
+
+                    // 첨부파일
+                    const attachmentInput = document.getElementById('image');
+                    if (!attachmentInput.files || attachmentInput.files.length === 0) {
+                        document.getElementById('attachmentError').classList.remove('hidden');
+                        valid = false;
+                    } else {
+                        document.getElementById('attachmentError').classList.add('hidden');
+                    }
+
+                    // 이메일
+                    const email = document.getElementById('email').value.trim();
+                    if (!email) {
+                        document.getElementById('emailError').classList.remove('hidden');
+                        valid = false;
+                    } else {
+                        document.getElementById('emailError').classList.add('hidden');
+                    }
+
+                    // 개인정보 동의
+                    const privacy = document.getElementById('privacy').checked;
+                    if (!privacy) {
+                        document.getElementById('privacyError').classList.remove('hidden');
+                        valid = false;
+                    } else {
+                        document.getElementById('privacyError').classList.add('hidden');
+                    }
+
+                    return valid;
+                }
+
+                document.querySelector('form').addEventListener('submit', async function(e) {
+                    const valid = await validateForm();
+                    if (!valid) {
+                        e.preventDefault();
+                    }
+                });
+            </script>
+        </div>
+    </div>
+</main>
+</body>
+</html>
