@@ -1,5 +1,6 @@
 package com.cometogo.ctg.group.service;
 
+import com.cometogo.ctg.group.dao.GroupDao;
 import com.cometogo.ctg.group.dao.GroupRegisterDao;
 import com.cometogo.ctg.group.dto.GroupRegisterDto;
 import org.springframework.stereotype.Service;
@@ -10,11 +11,17 @@ import java.util.List;
 @Service
 public class GroupRegisterService {
 
+
+    private final GroupDao groupDao;
+
     private final GroupRegisterDao groupRegisterDao;
 
-    public GroupRegisterService(GroupRegisterDao groupRegisterDao) {
+    public GroupRegisterService(GroupDao groupDao, GroupRegisterDao groupRegisterDao) {
+        this.groupDao = groupDao;
         this.groupRegisterDao = groupRegisterDao;
     }
+
+
 
     /** 🔹 가입 신청 */
     @Transactional
@@ -31,20 +38,39 @@ public class GroupRegisterService {
         groupRegisterDao.insertRegister(register);
     }
 
+    public GroupRegisterDto getRegisterById(Long registerId) {
+        return groupRegisterDao.findById(registerId);
+    }
+
     /** 🔹 그룹별 신청 목록 조회 */
     public List<GroupRegisterDto> getRegistersByGroup(Long groupId) {
         return groupRegisterDao.findByGroupId(groupId);
     }
 
-    /** 🔹 승인/거절 처리 */
-    @Transactional
-    public void updateRegisterStatus(Long registerId, String status, Long adminId) {
+    public void updateRegisterStatus(Long registerId, String status, Long processedBy) {
+
+        // 1) 상태 변경 (이미 있음)
         GroupRegisterDto dto = new GroupRegisterDto();
         dto.setGroupJoinId(registerId);
         dto.setJoinStatus(status);
-        dto.setProcessedBy(adminId);
+        dto.setProcessedBy(processedBy);
         groupRegisterDao.updateStatus(dto);
+
+        // 2) 승인일 때만 멤버 테이블에 추가해야 함 (❗ 빠져있음)
+        if (status.equals("APPROVED")) {
+            // groupId, userId 가져오기
+            GroupRegisterDto info = groupRegisterDao.findById(registerId);
+
+            groupDao.insertGroupMember(
+                    info.getGroupId(),
+                    info.getUserId(),
+                    "MEMBER",
+                    "ACTIVE"
+            );
+        }
     }
+
+
 }
 
 

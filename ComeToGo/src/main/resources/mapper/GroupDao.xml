@@ -18,6 +18,8 @@
         <result property="createdAt" column="created_at"/>
         <result property="categoryName" column="category_name"/>
         <result property="region" column="region"/>
+        <result property="isOwner" column="owner"/>
+        <result property="isMember" column="member"/>
     </resultMap>
 
     <!-- MemberDto의 속성에 DB 컬럼 값을 연결하는 정의 -->
@@ -55,10 +57,10 @@
     <insert id="insertGroup" parameterType="com.cometogo.ctg.group.dto.GroupDto" useGeneratedKeys="true" keyProperty="groupId">
         INSERT INTO ctg_group (
             owner_user_id, category_id, intro, group_name,
-            join_message, created_at, group_status
+            join_message, created_at
         ) VALUES (
                      #{ownerUserId}, #{categoryId}, #{intro}, #{groupName},
-                     #{joinMessage}, NOW(), 1
+                     #{joinMessage}, NOW()
                  )
     </insert>
 
@@ -80,7 +82,8 @@
                  )
     </insert>
 
-    <!-- 🔹 4. 그룹 상세 조회 -->
+
+
     <select id="getGroupDetailById" resultType="com.cometogo.ctg.group.dto.GroupDetailDto">
         SELECT
             g.group_id,
@@ -90,10 +93,21 @@
             g.created_at,
             g.group_status,
             g.owner_user_id,
-            l.city,
-            l.district,
-            l.neighborhood
+            g.category_id,
+            c.category_name,
+            CONCAT(l.city, ' ', l.district, ' ', l.neighborhood) AS region,
+
+            CASE WHEN g.owner_user_id = #{loginUserId} THEN TRUE ELSE FALSE END AS owner,
+            CASE WHEN EXISTS (
+                SELECT 1
+                FROM group_users gu
+                WHERE gu.group_id = g.group_id
+                  AND gu.user_id = #{loginUserId}
+                  AND gu.status = 'ACTIVE'
+            ) THEN TRUE ELSE FALSE END AS member
+
         FROM ctg_group g
+                 LEFT JOIN ctg_categories c ON g.category_id = c.category_id
                  LEFT JOIN ctg_group_location l ON g.group_id = l.group_id
         WHERE g.group_id = #{groupId}
     </select>

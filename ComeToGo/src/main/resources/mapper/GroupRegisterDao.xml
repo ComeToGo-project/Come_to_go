@@ -3,7 +3,7 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.example.demo.dao.GroupRegisterDao">
+<mapper namespace="com.cometogo.ctg.group.dao.GroupRegisterDao">
 
     <!-- 가입 신청 등록 -->
     <insert id="insertRegister" useGeneratedKeys="true" keyProperty="groupJoinId">
@@ -31,6 +31,29 @@
         ORDER BY created_at DESC
     </select>
 
+
+    <select id="existsMemberInGroup" resultType="boolean">
+        SELECT
+            CASE WHEN COUNT(*) > 0 THEN TRUE ELSE FALSE END
+        FROM group_users
+        WHERE group_id = #{groupId}
+          AND user_id = #{userId}
+    </select>
+
+    <select id="findById" resultType="com.cometogo.ctg.group.dto.GroupRegisterDto">
+        SELECT
+            group_join_id AS groupJoinId,
+            user_id AS userId,
+            group_id AS groupId,
+            message,
+            join_status AS joinStatus,
+            created_at AS createdAt,
+            processed_at AS processedAt,
+            processed_by AS processedBy
+        FROM ctg_group_join
+        WHERE group_join_id = #{groupJoinId}
+    </select>
+
     <!-- 특정 유저의 특정 그룹 신청 여부 확인 -->
     <select id="findByUserAndGroup" resultType="com.cometogo.ctg.group.dto.GroupRegisterDto">
         SELECT
@@ -46,6 +69,15 @@
         WHERE user_id = #{userId}
           AND group_id = #{groupId}
     </select>
+
+    <select id="isMember" resultType="boolean">
+        SELECT
+            CASE WHEN COUNT(*) > 0 THEN TRUE ELSE FALSE END
+        FROM group_users
+        WHERE group_id = #{groupId}
+          AND user_id = #{userId}
+    </select>
+
 
     <!-- 상태 변경 (승인 / 거절) -->
     <update id="updateStatus">

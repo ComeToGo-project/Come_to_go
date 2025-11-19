@@ -1,6 +1,7 @@
 package com.cometogo.ctg.group.service;
 
 import com.cometogo.ctg.group.dao.GroupDao;
+import com.cometogo.ctg.group.dao.GroupRegisterDao;
 import com.cometogo.ctg.group.dto.GroupDetailDto;
 import com.cometogo.ctg.group.dto.GroupDto;
 import com.cometogo.ctg.group.dto.MemberDto;
@@ -17,6 +18,7 @@ import java.util.List;
     public class GroupService {
 
         private final GroupDao groupDao;
+        private final GroupRegisterDao groupRegisterDao;
 
 
         /** 🔹 그룹 생성 (트랜잭션 처리) */
@@ -55,13 +57,30 @@ import java.util.List;
             return groupDto.getGroupId();
         }
 
-        /** 🔹 그룹 상세정보 조회 */
-        public GroupDetailDto getGroupDetailById(Long groupId) {
-            return groupDao.getGroupDetailById(groupId);
+        @Transactional
+        public GroupDetailDto getGroupDetailById(Long groupId, Long loginUserId) {
+            GroupDetailDto groupDetail = groupDao.getGroupDetailById(groupId,loginUserId);
+
+            if (groupDetail != null && loginUserId != null) {
+
+                // 🔹 오너 여부
+                groupDetail.setOwner(loginUserId.equals(groupDetail.getOwnerUserId()));
+
+                // 🔹 멤버 여부 (정확하게 수정)
+                boolean member = groupDao.isUserMemberOfGroup(groupId, loginUserId);
+                groupDetail.setMember(member);
+            }
+
+            return groupDetail;
         }
+
+
+
+
+
         @Transactional(readOnly = true)
         public GroupDetailDto getGroupDetail(Long groupId, Long userId) {
-            GroupDetailDto groupDetail = groupDao.getGroupDetailById(groupId);
+            GroupDetailDto groupDetail = groupDao.getGroupDetailById(groupId,userId);
             if (groupDetail == null) return null;
 
             groupDetail.setMemberCount(groupDao.getMemberCountByGroupId(groupId));
@@ -84,22 +103,11 @@ import java.util.List;
 
 
 
-        /**
-         * ✅ 사용자가 해당 동호회 멤버인지 여부
-         */
-        @Transactional(readOnly = true)
-        public boolean isUserMember(Long groupId, Long userId) {
-            if (userId == null) return false;
-            return groupDao.isUserMemberOfGroup(groupId, userId);
-        }
 
-//        /**
-//         * ✅ 로그인 사용자가 가입한 모든 동호회 조회
-//         */
-//        @Transactional(readOnly = true)
-//        public List<GroupDetailDto> getMyGroups(Long userId) {
-//            return groupDao.selectMyGroup(userId);
-//        }
+        @Transactional
+        public GroupDto getGroupById(Long groupId) {
+            return groupDao.findById(groupId);
+        }
 
         @Transactional
         public List<MyGroupDto> getMyGroups(Long userId) {
@@ -116,6 +124,9 @@ import java.util.List;
             return groupDao.searchGroups(keyword,category,region,sort);
         }
 
+        public boolean isMember(Long userId, Long groupId) {
+            return groupDao.isMember(userId, groupId);
+        }
     }
 
 

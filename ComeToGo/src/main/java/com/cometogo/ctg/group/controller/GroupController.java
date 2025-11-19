@@ -114,7 +114,7 @@ public class GroupController {
 
 
     /** ✅ 마이페이지 - 내가 가입한 동호회 목록 */
-    @GetMapping("/mygroup")
+    @GetMapping("/mypage")
     public String myGroups(Model model, HttpSession session) {
         System.out.println("세션 userId:" + session.getAttribute("user_id"));
         Long userId = (Long) session.getAttribute("user_id");
@@ -127,7 +127,7 @@ public class GroupController {
         List<MyGroupDto> myGroups = groupService.getMyGroups(userId);
         model.addAttribute("myGroups", myGroups);
 
-        return "groups/mygroup"; // ✅ 뷰 파일 (templates/groups/mygroup.html)
+        return "groups/mypage"; // ✅ 뷰 파일 (templates/groups/mypage.html)
 
     }
 
