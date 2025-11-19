@@ -82,8 +82,7 @@
                     <a th:href="@{/groups/{id}/detail(id=${group.groupId})}" class="text-blue-600 hover:underline font-semibold text-lg"
                        th:text="${group.groupName}">동호회 이름</a>
                     <p class="text-gray-600 mt-1" th:text="${group.intro}">동호회 소개</p>
-                    <p class="text-gray-400 text-sm mt-2">카테고리 ID: <span th:text="${group.categoryId}"></span></p>
-                    <p class="text-gray-400 text-sm">상태: <span th:text="${group.groupStatus}"></span></p>
+                    <p class="text-gray-400 text-sm mt-2"> <span th:text="${group.categoryName}"></span></p>
                 </li>
             </ul>
         </section>
