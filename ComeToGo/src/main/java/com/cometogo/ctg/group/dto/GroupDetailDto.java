@@ -38,12 +38,5 @@ public class GroupDetailDto {
     private List<ScheduleDto> schedules;
     private List<PostDto> posts;
 
-    // --- 편의 메서드 ---
-    public String getDisplayRegion() {
-        return region != null ? region : "지역 미정";
-    }
 
-    public String getDisplayCategoryName() {
-        return categoryName != null ? categoryName : "카테고리 미정";
-    }
 }
