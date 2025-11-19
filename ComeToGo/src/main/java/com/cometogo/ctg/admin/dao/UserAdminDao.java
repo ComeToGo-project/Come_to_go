@@ -18,4 +18,6 @@ public interface UserAdminDao {
     int suspendUser(@Param("userId") Long userId);
 
     int unsuspendUser(@Param("userId") Long userId);
+
+    Long findUserIdByNickname(String nickname);
 }

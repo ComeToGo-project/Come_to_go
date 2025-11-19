@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8" />
     <title>헤더 · 푸터 버튼 배치 샘플</title>
@@ -30,16 +31,21 @@
 
         <!-- 로그인 시 닉네임 버튼-->
         <div th:if="${nickname != null}">
-            <span th:text="${nickname}"></span> 님
+            <button
+                    class="font-semibold font-sans hover:text-blue-900 no-underline bg-transparent border-0 p-0 cursor-pointer mb-4"
+                    style="background:none; border:none;"
+                    onclick="location.href='/user/mypage'">
+                <span th:text="${nickname}"></span> 님
+            </button>
             <br/>
-            <button onclick="location.href='/user/logout'">
+            <button class="bg-blue-600 text-white w-full py-2 rounded font-semibold hover:bg-blue-700 transition" onclick="location.href='/user/logout'">
                 로그아웃
             </button>
         </div>
         <!-- 3. 로그인/회원가입 버튼 묶음 -->
-        <div th:if="${nickname == null}" class="flex flex-col gap-2">
-            <button onclick="location.href='/user/login'">로그인</button>
-            <button onclick="location.href='/user/join'">회원가입</button>
+        <div th:if="${nickname == null}" class="flex flex-col gap-3">
+            <button class="bg-blue-600 text-white w-full py-2 rounded font-semibold hover:bg-blue-700 transition" onclick="location.href='/user/login'">로그인</button>
+            <button class="bg-blue-600 text-white w-full py-2 rounded font-semibold hover:bg-blue-700 transition" onclick="location.href='/user/join'">회원가입</button>
         </div>
     </div>
 </header>

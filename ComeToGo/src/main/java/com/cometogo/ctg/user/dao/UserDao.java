@@ -1,6 +1,7 @@
 package com.cometogo.ctg.user.dao;
 
 
+import com.cometogo.ctg.user.dto.UserAddressDto;
 import com.cometogo.ctg.user.dto.UserDto;
 import jakarta.validation.Valid;
 import org.apache.ibatis.annotations.Mapper;
@@ -36,5 +37,24 @@ public interface UserDao {
     // 비밀번호 업데이트
     @Update("UPDATE ctg_users SET pw = #{password} WHERE id = #{userId}")
     void updatePassword(@Param("userId") String userId, @Param("password") String password);
+
+    @Select("SELECT user_name FROM ctg_users WHERE user_id = #{userId}")
+    String findByName(Long userId);
+
+    @Select("SELECT nickname FROM ctg_users WHERE user_id = #{userId}")
+    String findByNickName(Long userId);
+
+    @Select("SELECT id FROM ctg_users WHERE user_id = #{userId}")
+    String findById(Long userId);
+
+    @Update("UPDATE ctg_users SET pw = #{newPw} WHERE user_id = #{userId}")
+    boolean changePassword(Long userId, String newPw);
+
+    @Select("SELECT pw FROM ctg_users WHERE user_id = #{uesrId}")
+    String findPasswordByUserId(Long userId);
+
+    @Update("UPDATE ctg_users SET nickname = #{newNickname} WHERE user_id = #{userId}")
+    void updateNickname(Long userId, String newNickname);
+
 }
 

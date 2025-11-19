@@ -15,8 +15,10 @@ public class UserDto {
     private String id;
 
     @NotBlank(message = "비밀번호는 필수입니다.")
-    @Pattern(regexp = "^(?=.*[!@#$%^&*(),.?\":{}|<>]).{8,}$",
-            message = "비밀번호는 특수문자를 포함한 8자 이상이어야 합니다.")
+    @Pattern(
+            regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*(),.?\":{}|<>]).{8,}$",
+            message = "비밀번호는 영문 대/소문자, 숫자, 특수문자를 포함한 8자 이상이어야 합니다."
+    )
     private String pw;
 
     @NotBlank(message = "비밀번호 확인은 필수입니다.")
@@ -27,7 +29,8 @@ public class UserDto {
     private String userName;
 
     @NotBlank(message = "닉네임은 필수입니다.")
-    @Size(min = 3, message = "닉네임은 3글자 이상이어야 합니다.")
+    @Size(min = 3, max = 15, message = "닉네임은 3~15글자 이내여야 합니다.")
+    @Pattern(regexp = "^[가-힣a-zA-Z0-9]+$", message = "닉네임은 한글, 영문, 숫자만 사용할 수 있습니다.")
     private String nickname;
 
     @NotNull(message = "생년월일은 필수입니다.")
