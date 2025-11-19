@@ -63,7 +63,7 @@ public class GroupController {
     }
     @GetMapping("/groups/{groupId}")
     public String groupDetail(@PathVariable Long groupId, Model model, HttpSession session) {
-        Long userId = (Long) session.getAttribute("userId");
+        Long userId = (Long) session.getAttribute("user_id");
 
         GroupDetailDto groupDetail = groupService.getGroupDetail(groupId, userId);
         if (groupDetail == null) {
@@ -80,7 +80,7 @@ public class GroupController {
                                   HttpSession session) {
 
         // 로그인된 사용자 ID 가져오기
-        Long userId = (Long) session.getAttribute("userId");
+        Long userId = (Long) session.getAttribute("user_id");
 
         // 서비스 호출
         GroupDetailDto groupDetail = groupService.getGroupDetail(groupId, userId);
