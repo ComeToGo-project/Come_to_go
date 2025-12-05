@@ -124,6 +124,10 @@ import java.util.List;
             return groupDao.searchGroups(keyword,category,region,sort);
         }
 
+        public boolean checkDuplicateGroupName(String groupName) {
+            return groupDao.isGroupNameExists(groupName);
+        }
+
         public boolean isMember(Long userId, Long groupId) {
             return groupDao.isMember(userId, groupId);
         }

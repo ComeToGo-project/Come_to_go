@@ -82,6 +82,22 @@
                  )
     </insert>
 
+    <!-- 동호회 이름 중복체크-->
+    <select id="isGroupNameExists" parameterType="string" resultType="boolean">
+        SELECT EXISTS(
+            SELECT 1
+            FROM ctg_group
+            WHERE group_name= #{groupName}
+        )
+    </select>
+
+    <select id="getAllCategories" resultType="com.cometogo.ctg.group.dto.CategoryDto">
+        SELECT category_id AS categoryId,
+               parent_id AS parentId,
+               category_name AS categoryName
+        FROM ctg_categories
+        ORDER BY category_id;
+    </select>
 
 
     <select id="getGroupDetailById" resultType="com.cometogo.ctg.group.dto.GroupDetailDto">
