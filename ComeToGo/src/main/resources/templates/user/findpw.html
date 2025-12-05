@@ -75,6 +75,7 @@
                 <button onclick="changePassword()" class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition">
                     비밀번호 변경
                 </button>
+                <!-- 여기 메시지 출력 -->
                 <p id="changeResult" class="text-sm mt-2"></p>
             </div>
         </div>
@@ -97,11 +98,6 @@
         const email = document.getElementById('userEmail').value;
         const sendResult = document.getElementById('sendResult');
         const sendBtn = document.getElementById('sendCodeBtn');
-
-        if (!userId || !email) {
-            alert('아이디와 이메일을 입력해주세요.');
-            return;
-        }
 
         sendBtn.disabled = true;
         sendBtn.textContent = '발송 중...';
@@ -130,7 +126,7 @@
                     sendBtn.textContent = '인증 코드 발송';
                 }
             })
-            .catch(function(error) {
+            .catch(function() {
                 alert('오류가 발생했습니다.');
                 sendBtn.disabled = false;
                 sendBtn.textContent = '인증 코드 발송';
@@ -144,17 +140,14 @@
         const code = document.getElementById('verifyCode').value;
         const verifyResult = document.getElementById('verifyResult');
 
-        if (!code || code.length !== 6) {
-            alert('6자리 인증 코드를 입력해주세요.');
-            return;
-        }
-
         fetch('/user/verify-password-reset-code', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
             },
-            body: 'userId=' + encodeURIComponent(userId) + '&email=' + encodeURIComponent(email) + '&code=' + encodeURIComponent(code)
+            body: 'userId=' + encodeURIComponent(userId)
+                + '&email=' + encodeURIComponent(email)
+                + '&code=' + encodeURIComponent(code)
         })
             .then(response => response.json())
             .then(function(data) {
@@ -175,38 +168,25 @@
                     verifyResult.className = 'text-sm mt-2 text-red-600';
                 }
             })
-            .catch(function(error) {
+            .catch(function() {
                 alert('오류가 발생했습니다.');
             });
     }
 
-    // 3단계: 비밀번호 변경
+    // 3단계: 비밀번호 변경 (백엔드 검증 + JSON)
     function changePassword() {
         const newPassword = document.getElementById('newPassword').value;
         const confirmPassword = document.getElementById('confirmPassword').value;
         const changeResult = document.getElementById('changeResult');
-
-        if (!newPassword || !confirmPassword) {
-            alert('비밀번호를 입력해주세요.');
-            return;
-        }
-
-        if (newPassword !== confirmPassword) {
-            alert('비밀번호가 일치하지 않습니다.');
-            return;
-        }
-
-        if (newPassword.length < 8) {
-            alert('비밀번호는 8자 이상이어야 합니다.');
-            return;
-        }
 
         fetch('/user/reset-password', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
             },
-            body: 'userId=' + encodeURIComponent(verifiedUserId) + '&newPassword=' + encodeURIComponent(newPassword)
+            body: 'userId=' + encodeURIComponent(verifiedUserId)
+                + '&newPassword=' + encodeURIComponent(newPassword)
+                + '&confirmPassword=' + encodeURIComponent(confirmPassword)
         })
             .then(response => response.json())
             .then(function(data) {
@@ -218,8 +198,9 @@
                     changeResult.className = 'text-sm mt-2 text-red-600';
                 }
             })
-            .catch(function(error) {
-                alert('오류가 발생했습니다.');
+            .catch(function() {
+                changeResult.textContent = '오류가 발생했습니다. 잠시 후 다시 시도해주세요.';
+                changeResult.className = 'text-sm mt-2 text-red-600';
             });
     }
 

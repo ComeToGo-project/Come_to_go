@@ -21,6 +21,9 @@
         <input type="text" id="groupName" th:field="*{groupName}" placeholder="동호회명을 입력하세요"
                class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" required />
       </div>
+        <p th:if="${#fields.hasErrors('groupName')}"
+           th:errors="*{groupName}"
+           class="text-red-500 text-sm mt-1"></p>
       <button type="button" class="mt-3 sm:mt-0 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded font-semibold">중복체크</button>
     </div>
 
@@ -36,6 +39,9 @@
           <option value="3">여행</option>
           <option value="4">음악</option>
         </select>
+          <p th:if="${#fields.hasErrors('categoryId')}"
+             th:errors="*{categoryId}"
+             class="text-red-500 text-sm mt-1"></p>
       </div>
     </div>
 
@@ -59,18 +65,27 @@
       <label for="city" class="block text-gray-700 font-semibold mb-1">도시</label>
       <input type="text" id="city" th:field="*{city}" placeholder="예: 서울"
              class="w-full border border-gray-300 rounded px-3 py-2" readonly />
+        <p th:if="${#fields.hasErrors('city')}"
+           th:errors="*{city}"
+           class="text-red-500 text-sm mt-1"></p>
     </div>
 
     <div>
       <label for="district" class="block text-gray-700 font-semibold mb-1">구/군</label>
       <input type="text" id="district" th:field="*{district}" placeholder="예: 강남구"
              class="w-full border border-gray-300 rounded px-3 py-2" readonly />
+        <p th:if="${#fields.hasErrors('district')}"
+           th:errors="*{district}"
+           class="text-red-500 text-sm mt-1"></p>
     </div>
 
     <div>
       <label for="neighborhood" class="block text-gray-700 font-semibold mb-1">동/읍/면</label>
       <input type="text" id="neighborhood" th:field="*{neighborhood}" placeholder="예: 역삼동"
              class="w-full border border-gray-300 rounded px-3 py-2" readonly />
+        <p th:if="${#fields.hasErrors('neighborhood')}"
+           th:errors="*{neighborhood}"
+           class="text-red-500 text-sm mt-1"></p>
     </div>
 
     <!-- 소개 내용 -->
@@ -78,6 +93,9 @@
       <label for="intro" class="block text-gray-700 font-semibold mb-1">소개 내용</label>
       <textarea id="intro" th:field="*{intro}" rows="5" placeholder="간단한 소개를 입력하세요"
                 class="w-full border border-gray-300 rounded p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+        <p th:if="${#fields.hasErrors('intro')}"
+           th:errors="*{intro}"
+           class="text-red-500 text-sm mt-1"></p>
     </div>
 
     <!-- 가입 메시지 -->
@@ -85,6 +103,9 @@
       <label for="joinMessage" class="block text-gray-700 font-semibold mb-1">가입 메시지</label>
       <input type="text" id="joinMessage" th:field="*{joinMessage}" placeholder="가입시 보여질 메시지 입력"
              class="w-full border border-gray-300 rounded px-3 py-2" />
+        <p th:if="${#fields.hasErrors('joinMessage')}"
+           th:errors="*{joinMessage}"
+           class="text-red-500 text-sm mt-1"></p>
     </div>
 
     <!-- 버튼 -->

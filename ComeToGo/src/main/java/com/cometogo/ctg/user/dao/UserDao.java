@@ -50,11 +50,13 @@ public interface UserDao {
     @Update("UPDATE ctg_users SET pw = #{newPw} WHERE user_id = #{userId}")
     boolean changePassword(Long userId, String newPw);
 
-    @Select("SELECT pw FROM ctg_users WHERE user_id = #{uesrId}")
+    @Select("SELECT pw FROM ctg_users WHERE user_id = #{userId}")
     String findPasswordByUserId(Long userId);
 
     @Update("UPDATE ctg_users SET nickname = #{newNickname} WHERE user_id = #{userId}")
     void updateNickname(Long userId, String newNickname);
 
+    @Select("SELECT user_role FROM ctg_users WHERE user_id = #{userId}")
+    String getRoleByUserId(Long userId);
 }
 

@@ -142,4 +142,8 @@ public class UserService {
     public boolean updateAddress(@Valid UserAddressDto addressDto) {
         return userAddressDao.updateAddress(addressDto);
     }
+
+    public String getRoleByUserId(Long userId) {
+        return userDao.getRoleByUserId(userId);
+    }
 }

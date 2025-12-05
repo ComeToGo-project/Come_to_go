@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.beans.PropertyEditorSupport;
+import java.util.HashMap;
 import java.util.Map;
 
 @Controller
@@ -141,7 +142,7 @@ public class UserController {
         return "user/findid";
     }
     @GetMapping("/login/find-password")
-    public String findPwForm(HttpSession session) {
+    public String findPwForm(HttpSession session,Model model) {
         return "user/findpw";
     }
 
@@ -192,17 +193,44 @@ public class UserController {
         }
     }
 
-    // 비밀번호 재설정
+    //비밀번호 재설정
     @PostMapping("/reset-password")
     @ResponseBody
-    public Map<String, Object> resetPassword(@RequestParam String userId, @RequestParam String newPassword) {
-        boolean result = userService.updatePassword(userId, newPassword);
+    public Map<String, Object> resetPassword(@RequestParam String userId,
+                                             @RequestParam String newPassword,
+                                             @RequestParam String confirmPassword) {
 
-        if (result) {
-            return Map.of("success", true);
-        } else {
-            return Map.of("success", false, "message", "비밀번호 변경에 실패했습니다.");
+        Map<String, Object> result = new HashMap<>();
+
+        // 비밀번호 검증 정규식
+        String passwordPattern = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*(),.?\":{}|<>]).{8,}$";
+
+        // 1) 형식 검사
+        if (!newPassword.matches(passwordPattern)) {
+            result.put("success", false);
+            result.put("message", "비밀번호는 최소 8자 이상이며, 영문 대/소문자, 숫자, 특수문자를 모두 포함해야 합니다.");
+            return result;
         }
+
+        // 2) 일치 검사
+        if (!newPassword.equals(confirmPassword)) {
+            result.put("success", false);
+            result.put("message", "새 비밀번호가 일치하지 않습니다.");
+            return result;
+        }
+
+        // 3) DB 업데이트
+        boolean success = userService.updatePassword(userId, newPassword);
+
+        if (!success) {
+            result.put("success", false);
+            result.put("message", "비밀번호 변경에 실패했습니다. 다시 시도해주세요.");
+            return result;
+        }
+
+        // 4) 성공
+        result.put("success", true);
+        return result;
     }
 
     @GetMapping("/mypage")

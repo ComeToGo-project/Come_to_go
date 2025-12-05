@@ -32,7 +32,11 @@ public class GroupController {
 
     /** 🔹 동호회 생성 폼 */
     @GetMapping("/create")
-    public String createForm(Model model) {
+    public String createForm(Model model,HttpSession session) {
+        Long userId = (Long)session.getAttribute("user_id");
+        if(userId==null){
+            return "redirect:/user/login";
+        }
         model.addAttribute("groupDto", new GroupDto());
         return "groups/create";
     }

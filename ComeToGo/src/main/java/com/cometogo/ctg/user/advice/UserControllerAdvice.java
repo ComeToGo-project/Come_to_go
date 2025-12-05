@@ -10,6 +10,7 @@ public class UserControllerAdvice {
 
     private final UserService userService;
 
+    //세션에서 닉네임 가져오기
     UserControllerAdvice(UserService userService) {
         this.userService = userService;
     }
@@ -18,6 +19,16 @@ public class UserControllerAdvice {
         Long userId = (Long) session.getAttribute("user_id");
         if (userId != null) {
             return userService.getNicknameByUserId(userId);  // DB에서 조회
+        }
+        return null;
+    }
+
+    //세션에서 권한 가져오기
+    @ModelAttribute("role")
+    public String addRole(HttpSession session) {
+        Long userId = (Long) session.getAttribute("user_id");
+        if (userId != null) {
+            return userService.getRoleByUserId(userId);
         }
         return null;
     }
