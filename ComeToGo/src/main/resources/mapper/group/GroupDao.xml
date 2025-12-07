@@ -91,13 +91,13 @@
         )
     </select>
 
-    <select id="getAllCategories" resultType="com.cometogo.ctg.group.dto.CategoryDto">
-        SELECT category_id AS categoryId,
-               parent_id AS parentId,
-               category_name AS categoryName
-        FROM ctg_categories
-        ORDER BY category_id;
-    </select>
+<!--    <select id="getAllCategories" resultType="com.cometogo.ctg.group.dto.CategoryDto">-->
+<!--        SELECT category_id AS categoryId,-->
+<!--               parent_id AS parentId,-->
+<!--               category_name AS categoryName-->
+<!--        FROM ctg_categories-->
+<!--        ORDER BY category_id;-->
+<!--    </select>-->
 
 
     <select id="getGroupDetailById" resultType="com.cometogo.ctg.group.dto.GroupDetailDto">

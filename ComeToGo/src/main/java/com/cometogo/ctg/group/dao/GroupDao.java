@@ -37,7 +37,7 @@ public interface GroupDao {
 
     List<PostDto> getPostsByGroupId(Long groupId);
 
-    List<CategoryDto> getAllCategories();
+    //List<CategoryDto> getAllCategories();
 
 
     boolean isUserMemberOfGroup(@Param("groupId") Long groupId, @Param("userId") Long userId);
