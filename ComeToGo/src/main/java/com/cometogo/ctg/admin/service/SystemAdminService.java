@@ -16,11 +16,20 @@ public class SystemAdminService {
         return systemAdminDao.findAllCategories();
     }
 
-    public void addCategory(String categoryName) {
-        systemAdminDao.addCategory(categoryName);
+    public void addCategory(String categoryName, Long parentId) {
+        systemAdminDao.addCategory(categoryName, parentId);
     }
 
-    public void deleteCategory(Long categoryId) {
-        systemAdminDao.deleteCategory(categoryId);
+    public boolean canDeleteCategory(Long categoryId) {
+        return systemAdminDao.countCategoryUsedInGroups(categoryId) == 0;
+    }
+
+    public boolean deleteCategory(Long categoryId) {
+        if (!canDeleteCategory(categoryId)) {
+            return false;
+        } else {
+            systemAdminDao.deleteCategory(categoryId);
+            return true;
+        }
     }
 }

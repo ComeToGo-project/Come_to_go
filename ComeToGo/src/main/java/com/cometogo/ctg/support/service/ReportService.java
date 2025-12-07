@@ -19,24 +19,36 @@ public class ReportService {
     private final ReportDao reportDao;
 
     @Transactional
-    public void submitReport(ReportDto reportDto, MultipartFile file) throws IOException {
+    public void submitReport(ReportDto reportDto, MultipartFile[] files) throws IOException {
         reportDao.insertReport(reportDto);
         Long reportId = reportDto.getReportId();
+        if (files != null) {
+            for(MultipartFile file : files) {
+                if (file != null && !file.isEmpty()) {
+                    String savePath = saveImageFile(file);
+                    ReportImageDto imgDto = new ReportImageDto();
+                    imgDto.setReportId(reportId);
+                    imgDto.setFilePath(savePath);
+                    imgDto.setOriginalName(file.getOriginalFilename());
+                    imgDto.setFileSize(file.getSize());
+                    imgDto.setUploadedAt(LocalDateTime.now());
+                    reportDao.insertReportImage(imgDto);
+                }
+            }
 
-        if (file != null && !file.isEmpty()) {
-            String savePath = saveImageFile(file);
-            ReportImageDto imgDto = new ReportImageDto();
-            imgDto.setReportId(reportId);
-            imgDto.setFilePath(savePath);
-            imgDto.setOriginalName(file.getOriginalFilename());
-            imgDto.setUploadedAt(LocalDateTime.now());
-            reportDao.insertReportImage(imgDto);
         }
     }
 
     private String saveImageFile(MultipartFile file) throws IOException {
-        String uploadDir = new File("src/main/resources/static/report-images/").getAbsolutePath() + "/";
-        String newFileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
+        File var10000 = new File("src/main/resources/static/report-images/");
+        String uploadDir = var10000.getAbsolutePath() + "/";
+        UUID var5 = UUID.randomUUID();
+        String newFileName = var5 + "_" + file.getOriginalFilename();
+        File dir = new File(uploadDir);
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
+
         file.transferTo(new File(uploadDir + newFileName));
         return "/report-images/" + newFileName;
     }

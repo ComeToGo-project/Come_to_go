@@ -1,10 +1,17 @@
 package com.cometogo.ctg.admin.controller;
 
+import com.cometogo.ctg.admin.dto.SystemAdminDto;
 import com.cometogo.ctg.admin.service.*;
+import com.cometogo.ctg.support.dto.ReportDto;
+import com.cometogo.ctg.support.dto.ReportImageDto;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
@@ -54,8 +61,9 @@ public class AdminController {
     public String groupManagementPage(
             @RequestParam(required = false) String filterType,
             @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) String warnSort,
             Model model) {
-        model.addAttribute("groupList", groupAdminService.getGroups(filterType, keyword));
+        model.addAttribute("groupList", groupAdminService.getGroups(filterType, keyword, warnSort));
         return "admin/group_management";
     }
 
@@ -95,8 +103,17 @@ public class AdminController {
             @RequestParam(required = false) String reportType,
             @RequestParam(required = false) String reportStatus,
             Model model) {
-        model.addAttribute("reportList", reportAdminService.getReports(keyword, reportType, reportStatus));
+        model.addAttribute("reportList", reportAdminService.getAllReports(keyword, reportType, reportStatus));
         return "admin/report_management";
+    }
+
+    @GetMapping({"/report/{id}"})
+    public String reportDetail(@PathVariable Long id, Model model) {
+        ReportDto report = reportAdminService.getReport(id);
+        List<ReportImageDto> images = reportAdminService.getReportImages(id);
+        model.addAttribute("report", report);
+        model.addAttribute("images", images);
+        return "admin/report_detail";
     }
 
     @PostMapping("/report/{reportId}/status")
@@ -113,16 +130,26 @@ public class AdminController {
         return "admin/system_management";
     }
 
-    @PostMapping("/system/group-category/add")
-    public String addCategory(@RequestParam String categoryName) {
-        systemAdminService.addCategory(categoryName);
-        return "redirect:/admin/management/system";
+    @PostMapping({"/system/group-category/add"})
+    public String addCategory(@Valid SystemAdminDto category, BindingResult result, Model model) {
+        if (result.hasErrors()) {
+            model.addAttribute("errorMessage", result.getFieldError("categoryName").getDefaultMessage());
+            model.addAttribute("categories", systemAdminService.getAllCategories());
+            return "admin/system_management";
+        } else {
+            systemAdminService.addCategory(category.getCategoryName().trim(), category.getParentId());
+            return "redirect:/admin/management/system";
+        }
     }
 
-    @PostMapping("/system/group-category/delete")
-    public String deleteCategory(@RequestParam Long categoryId) {
-        systemAdminService.deleteCategory(categoryId);
-        return "redirect:/admin/management/system";
+    @PostMapping({"/system/group-category/delete"})
+    public String deleteCategory(@RequestParam Long categoryId, Model model) {
+        if (!systemAdminService.deleteCategory(categoryId)) {
+            model.addAttribute("errorMessage", "다른 테이블에서 사용중인 카테고리라 삭제할 수 없습니다.");
+            model.addAttribute("categories", systemAdminService.getAllCategories());
+            return "admin/system_management";
+        } else {
+            return "redirect:/admin/management/system";
+        }
     }
-
 }

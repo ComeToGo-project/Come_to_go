@@ -1,12 +1,10 @@
 package com.cometogo.ctg.admin.dto;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
 import java.time.LocalDateTime;
 
-@Getter
-@Setter
+@Data
 public class UserAdminDto {
 
     private Long userId;

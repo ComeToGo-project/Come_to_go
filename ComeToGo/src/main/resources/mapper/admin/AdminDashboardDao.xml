@@ -8,6 +8,6 @@
         SELECT
             (SELECT COUNT(*) FROM ctg_users WHERE join_date >= #{startDate}) AS newUserCount,
             (SELECT COUNT(*) FROM ctg_group) AS groupTotalCount,
-            (SELECT COUNT(*) FROM ctg_report WHERE report_status = 'RECEIVED') AS repostCount
+            (SELECT COUNT(*) FROM ctg_report WHERE report_status = 'PENDING') AS reportCount
     </select>
 </mapper>

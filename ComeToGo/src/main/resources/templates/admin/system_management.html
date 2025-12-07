@@ -6,17 +6,48 @@
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-white min-h-screen flex flex-col">
+
+<script>
+    let pendingForm = null;
+    let pendingAction = "";
+    document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll('.confirm-form button').forEach(btn => {
+            btn.addEventListener('click', function (e) {
+                e.preventDefault();
+                pendingForm = btn.closest("form");
+                pendingAction = btn.getAttribute("data-action");
+                document.getElementById('modalMessage').textContent =
+                    `정말 ${pendingAction} 하시겠습니까?`;
+                document.getElementById('confirmModal').classList.remove("hidden");
+            });
+        });
+
+        document.getElementById('modalYes').addEventListener('click', function () {
+            if (pendingForm) {
+                pendingForm.submit();
+            }
+            document.getElementById('confirmModal').classList.add("hidden");
+            pendingForm = null;
+        });
+
+        document.getElementById('modalNo').addEventListener('click', function () {
+            document.getElementById('confirmModal').classList.add("hidden");
+            pendingForm = null;
+        });
+    });
+</script>
+
 <div class="w-full relative flex items-center pt-10 h-20">
     <div class="absolute left-10 top-1/2 -translate-y-1/2">
         <a href="/">
-            <img src="/img/자산%204.png" alt="로고" class="h-10"/>
+            <img src="/img/ctg-image.png" alt="로고" class="h-10"/>
         </a>
     </div>
     <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
         <a href="/admin/management">
-      <span class="w-1/2 font-bold text-2xl border-8 border-blue-700 px-6 py-3 bg-white text-gray-900 text-center">
-        관리자 페이지
-      </span>
+            <span class="w-1/2 font-bold text-2xl border-8 border-blue-700 px-6 py-3 bg-white text-gray-900 text-center">
+                관리자 페이지
+            </span>
         </a>
     </div>
 </div>
@@ -28,18 +59,54 @@
 
     <div class="mb-8">
         <span class="bg-white font-bold px-4 py-2 rounded mb-2 inline-block shadow">동호회 카테고리 목록</span>
+
+        <div th:if="${errorMessage != null}" class="mb-2 text-red-500 font-semibold">
+            <span th:text="${errorMessage}"></span>
+        </div>
+
         <form th:action="@{/admin/management/system/group-category/add}" method="post" class="flex gap-2 mt-2">
-            <input type="text" name="categoryName" placeholder="카테고리명 입력" class="px-3 py-2 rounded w-48">
+            <select name="parentId" class="px-3 py-2 rounded w-48">
+                <option value="" selected>대분류(없음)</option>
+                <option th:each="cat : ${categories}" th:if="${cat.parentId == null}" th:value="${cat.categoryId}"
+                        th:text="${cat.categoryName}"></option>
+            </select>
+            <input type="text" name="categoryName" placeholder="카테고리명 입력" th:value="${category?.categoryName}" class="px-3 py-2 rounded w-48">
             <button type="submit" class="bg-green-500 text-white px-3 py-2 rounded font-bold hover:bg-green-600">+ 추가</button>
         </form>
-        <div class="flex gap-4 mt-4">
-            <div th:each="cat : ${categories}" class="bg-white rounded px-4 py-2 flex items-center gap-2 shadow">
-                <span th:text="${cat.categoryName}" class="font-semibold"></span>
-                <form th:action="@{/admin/management/system/group-category/delete}" method="post" style="display:inline;">
-                    <input type="hidden" name="categoryId" th:value="${cat.categoryId}">
-                    <button type="submit" class="bg-red-500 text-white rounded px-2 py-1 font-bold hover:bg-red-600">- 삭제</button>
+
+        <div class="flex flex-wrap gap-2 mt-4">
+            <div th:each="parent : ${categories}" th:if="${parent.parentId == null}" class="inline-flex items-center bg-white rounded px-4 py-2 gap-2 shadow">
+                <span th:text="${parent.categoryName}" class="font-semibold"></span>
+                <!-- 삭제 버튼 수정: type="button", class, data-action 추가 -->
+                <form th:action="@{/admin/management/system/group-category/delete}" method="post" class="inline-block confirm-form">
+                    <input type="hidden" name="categoryId" th:value="${parent.categoryId}">
+                    <button type="button" class="bg-red-500 text-white rounded px-2 py-1 font-bold hover:bg-red-600"
+                            data-action="삭제">- 삭제</button>
                 </form>
+                <div class="flex flex-wrap gap-2 ml-8">
+                    <div th:each="child : ${categories}" th:if="${child.parentId == parent.categoryId}" class="flex items-center">
+                        <span th:text="${child.categoryName}" class="text-gray-600"></span>
+                        <form th:action="@{/admin/management/system/group-category/delete}" method="post" class="inline-block confirm-form">
+                            <input type="hidden" name="categoryId" th:value="${child.categoryId}">
+                            <button type="button" class="bg-red-400 text-white rounded px-2 py-1 font-bold hover:bg-red-500"
+                                    data-action="삭제">- 삭제</button>
+                        </form>
+                    </div>
+                </div>
             </div>
+        </div>
+    </div>
+</div>
+
+<!-- 모달 컴포넌트 -->
+<div id="confirmModal" class="fixed inset-0 flex items-center justify-center z-50 hidden bg-black bg-opacity-50">
+    <div class="bg-white p-8 rounded shadow-md text-center w-80">
+        <div class="mb-6 text-lg font-semibold" id="modalMessage">
+            정말 삭제 하시겠습니까?
+        </div>
+        <div class="flex justify-center gap-8">
+            <button id="modalYes" class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700">예</button>
+            <button id="modalNo" class="bg-gray-300 px-6 py-2 rounded hover:bg-gray-400">아니오</button>
         </div>
     </div>
 </div>

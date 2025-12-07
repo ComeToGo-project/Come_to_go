@@ -10,7 +10,9 @@ import java.util.List;
 public interface SystemAdminDao {
     List<SystemAdminDto> findAllCategories();
 
-    int addCategory(@Param("categoryName") String categoryName);
+    int addCategory(@Param("categoryName") String categoryName, @Param("parentId") Long parentId);
+
+    int countCategoryUsedInGroups(@Param("categoryId") Long categoryId);
 
     int deleteCategory(@Param("categoryId") Long categoryId);
 }

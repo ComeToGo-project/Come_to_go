@@ -7,13 +7,13 @@
 
     <select id="findUsers" resultType="com.cometogo.ctg.admin.dto.UserAdminDto">
         SELECT u.user_id,
-               u.nickname,
-               u.email,
-               u.join_date,
-               u.user_role,
-               u.user_status,
-               b.ban_start,
-               b.ban_end
+        u.nickname,
+        u.email,
+        u.join_date,
+        u.user_role,
+        u.user_status,
+        b.ban_start,
+        b.ban_end
         FROM ctg_users u
         LEFT JOIN ctg_user_ban b ON u.user_id = b.user_id AND b.ban_status = 'BAN'
         <where>
@@ -37,7 +37,7 @@
     <update id="suspendUser" parameterType="long">
         UPDATE ctg_users
         SET user_status = 'SUSPENDED'
-        WHERE user_id = #{userId};
+        WHERE user_id = #{userId}
     </update>
 
     <update id="unsuspendUser" parameterType="long">
@@ -49,6 +49,13 @@
     <select id="findUserIdByNickname" resultType="java.lang.Long" parameterType="java.lang.String">
         SELECT user_id
         FROM ctg_users
-        WHERE nickname = #{nickname};
+        WHERE nickname = #{nickname}
+    </select>
+
+    <select id="findUserEmailById" parameterType="long" resultType="string">
+        SELECT email
+        FROM ctg_users
+        WHERE user_id = #{userId}
+            LIMIT 1
     </select>
 </mapper>

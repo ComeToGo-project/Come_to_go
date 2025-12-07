@@ -14,8 +14,8 @@ public class GroupAdminService {
 
     private final GroupAdminDao groupAdminDao;
 
-    public List<GroupAdminDto> getGroups(String filterType, String keyword) {
-        return groupAdminDao.findGroups(filterType, keyword);
+    public List<GroupAdminDto> getGroups(String filterType, String keyword, String warnSort) {
+        return groupAdminDao.findGroups(filterType, keyword, warnSort);
     }
 
     @Transactional

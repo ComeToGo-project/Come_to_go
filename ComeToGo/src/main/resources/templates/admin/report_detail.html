@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>신고 상세</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen py-10">
+
+<div class="max-w-3xl mx-auto bg-white rounded-xl shadow p-6">
+    <div class="flex justify-between items-center mb-4">
+        <h1 class="text-2xl font-bold">신고 상세</h1>
+        <a href="/admin/management/report" class="text-blue-600 font-semibold">목록으로</a>
+    </div>
+
+    <div class="mb-4 space-y-1">
+        <p>
+            <span class="font-semibold">신고 대상:</span>
+            <span th:text="${report.targetName}">닉네임</span>
+        </p>
+
+        <p>
+            <span class="font-semibold">신고 유형:</span>
+            <span th:switch="${report.reportType}">
+                <span th:case="'USER'">회원</span>
+                <span th:case="'GROUP'">동호회</span>
+                <span th:case="'MARKET'">중고거래</span>
+                <span th:case="'CHAT'">채팅</span>
+                <span th:case="'BOARD'">게시글</span>
+                <span th:case="'COMMENT'">댓글</span>
+                <span th:case="'SUPPORT'">문의</span>
+                <span th:case="'OTHER'">기타</span>
+                <span th:case="*"
+                      th:text="${report.reportType}">기타</span>
+            </span>
+        </p>
+
+        <p>
+            <span class="font-semibold">신고일자:</span>
+            <span th:text="${report.createdAt}"></span>
+        </p>
+
+        <p>
+            <span class="font-semibold">상태:</span>
+            <span th:switch="${report.reportStatus}">
+                <span th:case="'DONE'">완료</span>
+                <span th:case="'PENDING'">미처리</span>
+                <span th:case="*" th:text="${report.reportStatus}"></span>
+            </span>
+        </p>
+    </div>
+
+    <!-- 신고 내용 -->
+    <div class="mb-4">
+        <p class="font-semibold mb-1">신고 사유</p>
+        <p class="border rounded px-3 py-2 bg-gray-50" th:text="${report.reason}"></p>
+    </div>
+
+    <div class="mb-4">
+        <p class="font-semibold mb-1">신고 상세 내용</p>
+        <p class="border rounded px-3 py-2 bg-gray-50 whitespace-pre-line"
+           th:text="${report.contents}"></p>
+    </div>
+
+    <!-- 첨부 이미지 -->
+    <div>
+        <p class="font-semibold mb-2">첨부파일</p>
+        <div th:if="${#lists.isEmpty(images)}">
+            <p class="text-gray-500 text-sm">등록된 첨부파일이 없습니다.</p>
+        </div>
+        <div th:if="${!#lists.isEmpty(images)}"
+             class="grid grid-cols-3 gap-3">
+            <div th:each="img : ${images}" class="border rounded p-2">
+                <a th:href="${img.filePath}" target="_blank">
+                    <img th:src="${img.filePath}"
+                         alt="첨부 이미지"
+                         class="w-full h-32 object-cover mb-1 hover:opacity-80 cursor-pointer">
+                </a>
+                <p class="text-xs truncate"
+                   th:text="${img.originalName}"></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

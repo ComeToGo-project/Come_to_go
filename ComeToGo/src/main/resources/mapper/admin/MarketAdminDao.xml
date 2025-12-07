@@ -6,16 +6,16 @@
 <mapper namespace="com.cometogo.ctg.admin.dao.MarketAdminDao">
     <select id="findMarketItems" resultType="com.cometogo.ctg.admin.dto.MarketAdminDto">
         SELECT m.item_id,
-               m.item_name,
-               u.user_id,
-               u.user_name,
-               l.city,
-               m.created_at,
-               m.status
+        m.item_name,
+        u.user_id,
+        u.user_name,
+        l.city,
+        m.created_at,
+        m.status
         FROM market m
-                 JOIN ctg_users u ON m.seller_id = u.user_id
-                 JOIN ctg_group g ON m.group_id = g.group_id
-                 LEFT JOIN ctg_group_location l ON g.group_id = l.group_id
+        JOIN ctg_users u ON m.seller_id = u.user_id
+        JOIN ctg_group g ON m.group_id = g.group_id
+        LEFT JOIN ctg_group_location l ON g.group_id = l.group_id
         <where>
             <if test="filterType != null and keyword != null and keyword != ''">
                 <choose>
@@ -27,9 +27,9 @@
                     </when>
                 </choose>
             </if>
-        <if test="status != null and status != ''">
-            AND m.status = #{status}
-        </if>
+            <if test="status != null and status != ''">
+                AND m.status = #{status}
+            </if>
         </where>
         ORDER BY m.created_at DESC
     </select>

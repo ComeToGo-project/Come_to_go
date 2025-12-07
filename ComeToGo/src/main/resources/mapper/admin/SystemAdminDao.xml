@@ -5,11 +5,17 @@
 
 <mapper namespace="com.cometogo.ctg.admin.dao.SystemAdminDao">
     <select id="findAllCategories" resultType="com.cometogo.ctg.admin.dto.SystemAdminDto">
-        SELECT category_id, category_name FROM ctg_categories
+        SELECT category_id, parent_id, category_name FROM ctg_categories
     </select>
-    <insert id="addCategory" parameterType="string">
-        INSERT INTO ctg_categories (category_name) VALUES (#{categoryName})
+
+    <insert id="addCategory" parameterType="map">
+        INSERT INTO ctg_categories (category_name, parent_id) VALUES (#{categoryName}, #{parentId})
     </insert>
+
+    <select id="countCategoryUsedInGroups" parameterType="long" resultType="int">
+        SELECT COUNT(*) FROM ctg_group WHERE category_id = #{categoryId}
+    </select>
+
     <delete id="deleteCategory" parameterType="long">
         DELETE FROM ctg_categories WHERE category_id = #{categoryId}
     </delete>

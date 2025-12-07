@@ -30,7 +30,34 @@
 
     <update id="updateReportStatus" parameterType="map">
         UPDATE ctg_report
-        SET status = #{status}
+        SET report_status = #{reportStatus}
         WHERE report_id = #{reportId};
     </update>
+
+    <select id="findById" parameterType="long" resultType="com.cometogo.ctg.support.dto.ReportDto">
+        SELECT r.report_id AS reportId,
+               r.reporter_id AS reporterId,
+               r.target_id AS targetId,
+               u.user_name AS targetName,
+               r.report_type AS reportType,
+               r.reason,
+               r.contents,
+               r.report_status AS reportStatus,
+               r.created_at AS createdAt
+        FROM ctg_report r
+                 LEFT JOIN ctg_users u ON r.target_id = u.user_id
+        WHERE report_id = #{reportId}
+    </select>
+
+    <select id="findByReportId" parameterType="long" resultType="com.cometogo.ctg.support.dto.ReportImageDto">
+        SELECT image_id,
+               report_id,
+               file_path,
+               original_name,
+               file_size,
+               uploaded_at
+        FROM ctg_report_image
+        WHERE report_id = #{reportId}
+        ORDER BY image_id
+    </select>
 </mapper>

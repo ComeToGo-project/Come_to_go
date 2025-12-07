@@ -12,193 +12,259 @@
 <main class="flex justify-center items-start py-12 bg-blue-100 min-h-[calc(100vh-80px)]">
     <div class="w-full max-w-2xl bg-white rounded-xl p-6 shadow-lg border-2 border-blue-300">
         <div class="flex items-start gap-5">
-            <!-- 왼쪽: 문의/신고 버튼 -->
             <div>
                 <button type="button"
                         class="bg-white border border-gray-300 px-4 py-2 rounded-md shadow font-semibold mb-2 hover:bg-blue-50">
                     문의 / 신고 하기
                 </button>
             </div>
-            <form class="flex-1 space-y-4 w-full" th:action="@{/user/support/report}" method="post"
-                  enctype="multipart/form-data" onsubmit="return validateForm();">
-                <!-- 문의/신고 유형 -->
-                <label class="block font-semibold text-sm" for="reportType">문의 / 신고 유형</label>
-                <select id="reportType" name="reportType" required
-                        class="w-full border rounded px-3 py-2 bg-gray-100 font-semibold text-gray-600 text-sm mb-1"
-                        onchange="handleTypeChange(this.value)">
-                    <option value="">아래 항목을 선택해주세요.</option>
-                    <option value="USER">회원</option>
-                    <option value="GROUP">동호회</option>
-                    <option value="MARKET">중고거래</option>
-                    <option value="CHAT">채팅</option>
-                    <option value="BOARD">게시글</option>
-                    <option value="COMMENT">댓글</option>
-                    <option value="SUPPORT">문의</option>
-                    <option value="OTHER">기타</option>
-                </select>
-                <div id="reportTypeError" class="text-red-600 text-xs hidden">문의/신고 유형을 선택해 주세요.</div>
 
-                <!-- 타겟 닉네임/ID 입력 (문의, 기타 제외시만 보임) -->
-                <div id="targetIdBlock" style="display:none;">
-                    <label class="block font-semibold text-sm" for="targetNickname">대상 닉네임</label>
-                    <input type="text" id="targetNickname" name="targetNickname"
-                           class="w-full border-2 rounded px-3 py-2 outline-none focus:ring-2 focus:ring-blue-400"
-                           placeholder="대상 닉네임을 입력해주세요."/>
-                    <div id="targetNicknameError" class="text-red-600 text-xs hidden">닉네임을 입력하세요.</div>
-                    <div id="targetNicknameDbError" class="text-red-600 text-xs hidden">존재하지 않는 유저입니다.</div>
+            <form class="flex-1 space-y-4 w-full"
+                  th:action="@{/user/support/report}" method="post" enctype="multipart/form-data"
+                  th:object="${form}" id="reportForm">
+
+                <!-- 상단 전체 에러 메시지 -->
+                <div th:if="${error != null}"
+                     id="topError"
+                     class="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 font-semibold">
+                    <span th:text="${error}"></span>
                 </div>
 
-                <!-- 신고 사유 (필수) -->
-                <label class="block font-semibold text-sm" for="reason">신고 사유</label>
-                <input type="text" id="reason" name="reason" required
-                       class="w-full border-2 rounded px-3 py-2 outline-none focus:ring-2 focus:ring-blue-400"
-                       placeholder="신고/문의 사유를 입력해주세요."/>
-                <div id="reasonError" class="text-red-600 text-xs hidden">신고 사유를 입력하세요.</div>
+                <!-- 문의/신고 유형 -->
+                <div>
+                    <label class="block font-semibold text-sm mb-1" for="reportType">
+                        문의 / 신고 유형 <span class="text-red-500">*</span>
+                    </label>
+                    <select id="reportType"
+                            th:field="*{reportType}"
+                            class="w-full border-2 rounded px-3 py-2 outline-none focus:ring-2 focus:ring-blue-400 bg-gray-100 font-semibold text-gray-600 text-sm">
+                        <option value="">아래 항목을 선택해주세요.</option>
+                        <option value="USER">회원</option>
+                        <option value="GROUP">동호회(동호회장 닉네임 입력)</option>
+                        <option value="MARKET">중고거래</option>
+                        <option value="CHAT">채팅</option>
+                        <option value="BOARD">게시글</option>
+                        <option value="COMMENT">댓글</option>
+                        <option value="SUPPORT">문의</option>
+                        <option value="OTHER">기타</option>
+                    </select>
+                    <div th:if="${#fields.hasErrors('reportType')}"
+                         class="mt-1 text-xs text-red-600 font-semibold">
+                        <span th:errors="*{reportType}"></span>
+                    </div>
+                </div>
+
+                <!-- 대상 닉네임 (조건부) -->
+                <div id="targetIdBlock" style="display:none;">
+                    <label class="block font-semibold text-sm mb-1" for="targetNickname">
+                        신고 대상 닉네임 <span class="text-red-500">*</span>
+                    </label>
+                    <input type="text" id="targetNickname"
+                           th:field="*{targetNickname}"
+                           class="w-full border-2 rounded px-3 py-2 outline-none focus:ring-2 focus:ring-blue-400"
+                           placeholder="신고 대상 닉네임을 입력해주세요.">
+                    <div th:if="${#fields.hasErrors('targetNickname')}"
+                         class="mt-1 text-xs text-red-600 font-semibold">
+                        <span th:errors="*{targetNickname}"></span>
+                    </div>
+                </div>
+
+                <!-- 신고 사유 -->
+                <div>
+                    <label class="block font-semibold text-sm mb-1" for="reason">
+                        신고 사유 <span class="text-red-500">*</span>
+                    </label>
+                    <input type="text" id="reason"
+                           th:field="*{reason}"
+                           class="w-full border-2 rounded px-3 py-2 outline-none focus:ring-2 focus:ring-blue-400"
+                           placeholder="신고/문의 사유를 입력해주세요.">
+                    <div th:if="${#fields.hasErrors('reason')}"
+                         class="mt-1 text-xs text-red-600 font-semibold">
+                        <span th:errors="*{reason}"></span>
+                    </div>
+                </div>
 
                 <!-- 문의/신고 내용 -->
-                <label class="block font-semibold text-sm" for="contents">문의 / 신고 내용</label>
-                <textarea id="contents" name="contents" rows="3" required
-                          class="w-full border-2 rounded px-3 py-2 outline-none focus:ring-2 focus:ring-blue-400 resize-none"></textarea>
-                <div id="contentsError" class="text-red-600 text-xs hidden">문의/신고 내용을 작성해 주세요.</div>
-
-                <!-- 첨부파일 -->
                 <div>
-                    <span class="block font-semibold text-sm mb-1">첨부파일(필수)</span>
-                    <label class="inline-block bg-red-600 text-white px-4 py-2 rounded cursor-pointer font-semibold hover:bg-red-700">
-                        파일 선택
-                        <input type="file" id="image" name="image" class="hidden">
+                    <label class="block font-semibold text-sm mb-1" for="contents">
+                        문의 / 신고 내용 <span class="text-red-500">*</span>
                     </label>
-                    <div id="attachmentError" class="text-red-600 text-xs hidden">첨부파일을 등록해 주세요.</div>
+                    <textarea id="contents"
+                              th:field="*{contents}"
+                              rows="4"
+                              class="w-full border-2 rounded px-3 py-2 outline-none focus:ring-2 focus:ring-blue-400 resize-none"
+                              placeholder="문의/신고 내용을 자세히 작성해주세요."></textarea>
+                    <div th:if="${#fields.hasErrors('contents')}"
+                         class="mt-1 text-xs text-red-600 font-semibold">
+                        <span th:errors="*{contents}"></span>
+                    </div>
                 </div>
 
-                <!-- 연락받을 이메일 -->
+                <!-- 첨부파일 (필수, 최대 5개) -->
+                <div>
+                    <span class="block font-semibold text-sm mb-1 text-red-600">
+                        첨부파일 <span class="font-normal">(필수, 최대 5개)</span>
+                    </span>
+                    <label for="images"
+                           class="inline-block bg-red-600 text-white px-4 py-2 rounded cursor-pointer font-semibold hover:bg-red-700 transition-colors">
+                        📎 파일 선택 (여러 개 가능)
+                    </label>
+                    <input type="file" id="images" name="images"
+                           class="hidden"
+                           multiple
+                           accept="image/*,.pdf,.doc,.docx">
+                    <div id="fileNameDisplay"
+                         class="mt-2 text-sm text-gray-600 min-h-[1.25rem]"></div>
+                    <div id="fileError"
+                         class="mt-1 text-xs text-red-600 font-semibold"
+                         style="display:none;"></div>
+                    <div th:if="${#fields.hasErrors('images')}"
+                         class="mt-1 text-xs text-red-600 font-semibold">
+                        <span th:errors="*{images}"></span>
+                    </div>
+                </div>
+
+                <!-- 연락받을 이메일 (readonly, 필요 시 ReportForm에 추가) -->
                 <div>
                     <span class="block font-semibold text-sm mb-1">연락받을 이메일</span>
-                    <input type="email" id="email" name="email"
+                    <input type="email" id="email"
+                           th:field="*{email}"
                            class="w-full bg-gray-200 rounded px-3 py-2 text-gray-500 font-semibold text-sm mb-1"
-                           placeholder="(가입시 적은 이메일 고정)" readonly required>
-                    <div id="emailError" class="text-red-600 text-xs hidden">이메일을 입력해 주세요.</div>
+                           placeholder="(가입시 적은 이메일 고정)"
+                           readonly>
                 </div>
 
-                <!-- 개인정보 수집 동의 -->
-                <div class="flex items-center mt-2">
-                    <input type="checkbox" id="privacy" required class="accent-blue-500 w-5 h-5 mr-2"/>
-                    <span class="font-semibold text-green-800 text-sm">개인정보 수집 및 이용 <span class="font-normal text-xs">(필수)</span></span>
+                <!-- 개인정보 수집 동의 (프론트 전용) -->
+                <div class="flex items-center mt-4 p-3 bg-gray-50 rounded-lg border">
+                    <input type="checkbox" id="privacy" class="accent-blue-500 w-5 h-5 mr-3">
+                    <label for="privacy"
+                           class="font-semibold text-green-800 text-sm cursor-pointer select-none hover:text-green-900">
+                        개인정보 수집 및 이용에 동의합니다.
+                        <span class="font-normal text-xs text-gray-600">(필수)</span>
+                    </label>
                 </div>
-                <div id="privacyError" class="text-red-600 text-xs hidden">개인정보 수집 및 이용 동의를 체크하세요.</div>
 
                 <!-- 제출 버튼 -->
                 <button type="submit"
-                        class="w-full py-3 rounded bg-red-600 text-white text-lg font-bold mt-4 hover:bg-red-700 transition">
+                        class="w-full py-4 rounded-xl bg-gradient-to-r from-red-600 to-red-700 text-white text-lg font-bold mt-6 hover:from-red-700 hover:to-red-800 shadow-lg hover:shadow-xl transition-all duration-200 transform hover:-translate-y-0.5"
+                        id="submitBtn">
                     문의 / 신고 접수하기
                 </button>
             </form>
-
-            <script>
-                function handleTypeChange(val) {
-                    const block = document.getElementById('targetIdBlock');
-                    if (["USER", "GROUP", "MARKET", "CHAT", "BOARD", "COMMENT"].includes(val)) {
-                        block.style.display = "block";
-                    } else {
-                        block.style.display = "none";
-                    }
-                    document.getElementById('reportTypeError').classList.add('hidden');
-                }
-
-                window.onload = function () {
-                    handleTypeChange(document.getElementById('reportType').value);
-                };
-
-                async function validateNickname(nickname) {
-                    const res = await fetch(`/user/support/exist?nickname=${encodeURIComponent(nickname)}`);
-                    return await res.json();
-                }
-
-                async function validateForm() {
-                    let valid = true;
-
-                    const reportType = document.getElementById('reportType').value;
-                    if (!reportType) {
-                        document.getElementById('reportTypeError').classList.remove('hidden');
-                        valid = false;
-                    } else {
-                        document.getElementById('reportTypeError').classList.add('hidden');
-                    }
-
-                    if (["USER", "GROUP", "MARKET", "CHAT", "BOARD", "COMMENT"].includes(reportType)) {
-                        const nickname = document.getElementById('targetNickname').value.trim();
-                        if (!nickname) {
-                            document.getElementById('targetNicknameError').classList.remove('hidden');
-                            valid = false;
-                        } else {
-                            document.getElementById('targetNicknameError').classList.add('hidden');
-                            const exists = await validateNickname(nickname);
-                            if (!exists) {
-                                document.getElementById('targetNicknameDbError').classList.remove('hidden');
-                                valid = false;
-                            } else {
-                                document.getElementById('targetNicknameDbError').classList.add('hidden');
-                            }
-                        }
-                    }
-
-                    // 신고 사유 필수
-                    const reason = document.getElementById('reason').value.trim();
-                    if (!reason) {
-                        document.getElementById('reasonError').classList.remove('hidden');
-                        valid = false;
-                    } else {
-                        document.getElementById('reasonError').classList.add('hidden');
-                    }
-
-                    // 문의/신고 내용 필수
-                    const contents = document.getElementById('contents').value.trim();
-                    if (!contents) {
-                        document.getElementById('contentsError').classList.remove('hidden');
-                        valid = false;
-                    } else {
-                        document.getElementById('contentsError').classList.add('hidden');
-                    }
-
-                    // 첨부파일
-                    const attachmentInput = document.getElementById('image');
-                    if (!attachmentInput.files || attachmentInput.files.length === 0) {
-                        document.getElementById('attachmentError').classList.remove('hidden');
-                        valid = false;
-                    } else {
-                        document.getElementById('attachmentError').classList.add('hidden');
-                    }
-
-                    // 이메일
-                    const email = document.getElementById('email').value.trim();
-                    if (!email) {
-                        document.getElementById('emailError').classList.remove('hidden');
-                        valid = false;
-                    } else {
-                        document.getElementById('emailError').classList.add('hidden');
-                    }
-
-                    // 개인정보 동의
-                    const privacy = document.getElementById('privacy').checked;
-                    if (!privacy) {
-                        document.getElementById('privacyError').classList.remove('hidden');
-                        valid = false;
-                    } else {
-                        document.getElementById('privacyError').classList.add('hidden');
-                    }
-
-                    return valid;
-                }
-
-                document.querySelector('form').addEventListener('submit', async function(e) {
-                    const valid = await validateForm();
-                    if (!valid) {
-                        e.preventDefault();
-                    }
-                });
-            </script>
         </div>
     </div>
 </main>
+
+<script>
+    const reportTypeSelect = document.getElementById('reportType');
+    const targetBlock = document.getElementById('targetIdBlock');
+    const fileInput = document.getElementById('images');
+    const fileNameDisplay = document.getElementById('fileNameDisplay');
+    const form = document.getElementById('reportForm');
+    const privacyCheckbox = document.getElementById('privacy');
+    const submitBtn = document.getElementById('submitBtn');
+
+    // 문의/신고 유형에 따라 대상 닉네임 블록 토글
+    function handleTypeChange(val) {
+        if (["USER", "GROUP", "MARKET", "CHAT", "BOARD", "COMMENT"].includes(val)) {
+            targetBlock.style.display = "block";
+        } else {
+            targetBlock.style.display = "none";
+            const targetInput = document.getElementById('targetNickname');
+            if (targetInput) targetInput.value = '';
+        }
+    }
+
+    if (reportTypeSelect) {
+        handleTypeChange(reportTypeSelect.value);
+        reportTypeSelect.addEventListener('change', function () {
+            handleTypeChange(this.value);
+        });
+    }
+
+    // 파일 선택 시 표시 및 개수 제한
+    if (fileInput) {
+        fileInput.addEventListener('change', function () {
+            const files = Array.from(this.files);
+            const fileError = document.getElementById('fileError');
+
+            if (fileError) {
+                fileError.style.display = 'none';
+                fileError.textContent = '';
+            }
+
+            if (files.length === 0) {
+                fileNameDisplay.textContent = '';
+                return;
+            }
+
+            if (files.length > 5) {
+                this.value = '';
+                fileNameDisplay.textContent = '첨부파일은 최대 5개까지만 선택 가능합니다.';
+                fileNameDisplay.className = 'mt-2 text-sm text-red-500';
+                return;
+            }
+
+            fileNameDisplay.innerHTML =
+                `✅ ${files.length}개 파일 선택됨:<br>` +
+                files.map(f => `• ${f.name}`).join('<br>');
+            fileNameDisplay.className = 'mt-2 text-sm text-green-600 font-medium';
+        });
+    }
+
+    // 개인정보 동의 체크 시에만 제출 허용
+    function updateSubmitButton() {
+        if (!submitBtn || !privacyCheckbox) return;
+        const ok = privacyCheckbox.checked;
+        submitBtn.disabled = !ok;
+        submitBtn.style.opacity = ok ? '1' : '0.5';
+    }
+
+    if (privacyCheckbox) {
+        privacyCheckbox.addEventListener('change', updateSubmitButton);
+        updateSubmitButton();
+    }
+
+    // 폼 제출 전 파일 필수/최대 5개 검증
+    if (form) {
+        form.addEventListener('submit', function (event) {
+            const fileError = document.getElementById('fileError');
+            const files = fileInput.files;
+
+            if (fileError) {
+                fileError.style.display = 'none';
+                fileError.textContent = '';
+            }
+
+            if (!files || files.length === 0) {
+                event.preventDefault();
+                if (fileError) {
+                    fileError.textContent = '첨부파일은 최소 1개 이상 선택해주세요.';
+                    fileError.style.display = 'block';
+                }
+                fileInput.focus();
+                return false;
+            }
+
+            if (files.length > 5) {
+                event.preventDefault();
+                if (fileError) {
+                    fileError.textContent = '첨부파일은 최대 5개까지만 업로드할 수 있습니다.';
+                    fileError.style.display = 'block';
+                }
+                fileInput.focus();
+                return false;
+            }
+
+            if (!privacyCheckbox.checked) {
+                event.preventDefault();
+                alert('개인정보 수집 및 이용에 동의해주세요.');
+                privacyCheckbox.focus();
+                return false;
+            }
+        });
+    }
+</script>
+
 </body>
 </html>

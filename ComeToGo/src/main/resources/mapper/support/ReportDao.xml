@@ -7,11 +7,11 @@
     <insert id="insertReport" parameterType="com.cometogo.ctg.support.dto.ReportDto" useGeneratedKeys="true"
             keyProperty="reportId">
         INSERT INTO ctg_report (reporter_id, target_id, report_type, reason, contents, report_status, created_at)
-        VALUES (#{reporterId}, #{targetId}, #{reportType}, #{reason}, #{contents}, #{reportStatus}, #{createdAt});
+        VALUES (#{reporterId}, #{targetId}, #{reportType}, #{reason}, #{contents}, #{reportStatus}, #{createdAt})
     </insert>
 
     <insert id="insertReportImage" parameterType="com.cometogo.ctg.support.dto.ReportImageDto" useGeneratedKeys="true" keyProperty="imageId">
-        INSERT INTO ctg_report_image(report_id, file_path, original_name, uploaded_at)
-        VALUES (#{reportId}, #{filePath}, #{originalName}, #{uploadedAt});
+        INSERT INTO ctg_report_image(report_id, file_path, original_name, file_size, uploaded_at)
+        VALUES (#{reportId}, #{filePath}, #{originalName}, #{fileSize}, #{uploadedAt})
     </insert>
 </mapper>

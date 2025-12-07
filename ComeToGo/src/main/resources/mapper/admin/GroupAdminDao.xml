@@ -27,6 +27,14 @@
                 c.category_name LIKE CONCAT('%', #{keyword}, '%')
             </if>
         </where>
+        <choose>
+            <when test="warnSort != null and warnSort != ''">
+                ORDER BY g.group_status ${warnSort}
+            </when>
+            <otherwise>
+                ORDER BY g.created_at DESC
+            </otherwise>
+        </choose>
     </select>
 
     <delete id="deleteGroupLocations" parameterType="long">
@@ -82,4 +90,11 @@
         SET group_status = group_status + 1
         WHERE group_id = #{groupId};
     </update>
+
+    <select id="findOwnerUserIdByNickname" resultType="long">
+        SELECT g.owner_user_id
+        FROM ctg_group g
+                 JOIN ctg_users u ON g.owner_user_id = u.user_id
+        WHERE u.nickname = #{nickname}
+    </select>
 </mapper>

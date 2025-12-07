@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head>
+    <meta charset="UTF-8"/>
+    <title>내 문의 / 신고 목록</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 min-h-screen flex flex-col">
+
+<div th:replace="fragments :: header"></div>
+
+<main class="flex justify-center items-start py-12 bg-blue-100 min-h-[calc(100vh-80px)]">
+    <div class="w-full max-w-3xl bg-white rounded-xl p-6 shadow-lg border-2 border-blue-300">
+
+        <div class="mb-4 flex items-center justify-between">
+            <span class="font-bold text-lg">내 문의 / 신고 목록</span>
+        </div>
+
+        <div class="bg-blue-50 border border-blue-200 rounded-lg max-h-[520px] overflow-y-auto">
+            <table class="min-w-full text-sm text-center">
+                <thead class="bg-blue-100 sticky top-0">
+                <tr>
+                    <th class="py-2 px-2">제목/사유</th>
+                    <th class="py-2 px-2">작성일</th>
+                    <th class="py-2 px-2">상태</th>
+                </tr>
+                </thead>
+                <tbody>
+                <!-- 데이터 없을 때 -->
+                <tr th:if="${#lists.isEmpty(myReports)}">
+                    <td colspan="3" class="py-4 text-gray-500">
+                        아직 접수한 문의/신고가 없습니다.
+                    </td>
+                </tr>
+
+                <!-- 로그인 유저의 문의/신고 목록 -->
+                <tr th:each="r : ${myReports}" class="border-t hover:bg-blue-100">
+                    <td class="py-2 px-2 text-left truncate max-w-[220px]"
+                        th:text="${r.reason}"></td>
+                    <td class="py-2 px-2" th:text="${r.createdAt}"></td>
+                    <td class="py-2 px-2">
+                        <span th:switch="${r.reportStatus}">
+                            <span th:case="'PENDING'" class="text-orange-600">미처리</span>
+                            <span th:case="'DONE'" class="text-green-700">완료</span>
+                            <span th:case="*" th:text="${r.reportStatus}"></span>
+                        </span>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+</main>
+
+</body>
+</html>

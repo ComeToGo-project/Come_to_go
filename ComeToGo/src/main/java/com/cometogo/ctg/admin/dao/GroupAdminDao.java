@@ -11,7 +11,8 @@ public interface GroupAdminDao {
 
     List<GroupAdminDto> findGroups(
             @Param("filterType") String filterType,
-            @Param("keyword") String keyword
+            @Param("keyword") String keyword,
+            @Param("warnSort") String warnSort
     );
 
     //동호회 삭제
@@ -27,4 +28,6 @@ public interface GroupAdminDao {
     int deleteGroupSchedules(@Param("groupId") Long groupId);
 
     int addGroupWarning(@Param("groupId") Long groupId);
+
+    Long findOwnerUserIdByNickname(@Param("nickname") String nickname);
 }

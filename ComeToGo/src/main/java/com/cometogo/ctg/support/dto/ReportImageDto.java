@@ -10,5 +10,6 @@ public class ReportImageDto {
     private Long reportId;
     private String filePath;
     private String originalName;
+    private Long fileSize;
     private LocalDateTime uploadedAt;
 }

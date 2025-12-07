@@ -9,15 +9,15 @@ import java.util.List;
 @Mapper
 public interface UserAdminDao {
 
-    List<UserAdminDto> findUsers(
-            @Param("filterType") String filterType,
-            @Param("keyword") String keyword,
-            @Param("userStatus") String userStatus
-    );
+    List<UserAdminDto> findUsers(@Param("filterType") String filterType,
+                                 @Param("keyword") String keyword,
+                                 @Param("userStatus") String userStatus);
 
     int suspendUser(@Param("userId") Long userId);
 
     int unsuspendUser(@Param("userId") Long userId);
 
     Long findUserIdByNickname(String nickname);
+
+    String findUserEmailById(Long userId);
 }
